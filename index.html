@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeadLine</title>
+   <link rel="stylesheet" href="css/style.css">
+  <style>
+    #three-keyboard-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .final-cta {
+      opacity: 0;
+      visibility: hidden;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+    .hero-art-replay {
+      width: 40vw;
+      max-width: 600px;
+      margin-bottom: 40px;
+    }
+    .play-button-link {
+      position: absolute;
+      bottom: 15%;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+    .play-button-link:hover {
+      transform: scale(1.1);
+    }
+    .top-right-btn {
+      top: 30px;
+      right: 30px;
+      bottom: auto;
+    }
+  </style>
+</head>
+<body>
+<img
+    src="Assets/orangeLines.svg"
+    class="corner-svg"
+>
+<img
+    src="Assets/org-blur.png"
+    class="org-blur"
+>
+<img
+    src="Assets/purp-blur.png"
+    class="purp-blur"
+>
+<img
+    src="Assets/Main-Gradient.png"
+    class="main-blur"
+>
+
+  <section class="deadline-hero">
+ <div class="hero-stage">
+
+        <div class="hero-zoom-wrapper">
+            <img
+                src="Assets/DeadLine.svg"
+                class="hero-art"
+            >
+            <img class="character char-chair-L" src="Assets/Char_Chair.svg">
+
+            <img class="character char-front-L" src="Assets/Char_Front.svg">
+        
+            <img class="character char-side-L" src="Assets/Char_Side.svg">
+            
+            <img class="character char-front-R" src="Assets/Char_Front.svg">
+            
+            <!-- <img class="character char-chair-R" src="http://deadlinelanding.local/wp-content/uploads/2026/05/needs-rotation.svg"> -->
+            <video
+            class="character walking-character"
+            loop
+            muted
+            playsinline
+            preload="auto"
+            >
+            
+            <source src="Assets/Char_Animated.webm" type="video/webm">
+            
+            </video>
+
+        <p class="subtitle"> A game about escaping the one thing you can never outrun.</p>
+        
+        </div>
+<div class="scroll-indicator">
+    
+        <img src="Assets/scroll.svg" alt="Scroll down">
+    </div>
+    </div>
+   
+</section>
+
+<div class= "fall-trigger"></div>
+
+<section class="keyboard-scene section-two">
+
+    <div id="three-keyboard-container">
+        <!-- Character container nested or adjacent for layering -->
+        <div id="three-character-container"></div>
+    </div>
+
+    <!-- <video
+        class="keyboard-char"
+        muted
+        playsinline
+    >
+        <source src="Assets/Keyboard_Animated_Char.webm" type="video/webm">
+    </video> -->
+
+    <div class="keyboard-overlay">
+
+        <p class= "main-text">
+            
+        </p>
+        <p class="sub-text">
+        </p>
+    </div>
+
+    <a href="https://studiomesmer.com/deadline" class="play-button-link top-right-btn">
+        <img src="Assets/PlayButton.svg" alt="Play Now" style="height: 50px;">
+    </a>
+
+</section>
+
+<section class="transition-section">
+    <div class="transition-content">
+        <p class="transition-subtext">You made it across. You're still alive!</p>
+        <div class="transition-text">
+            <div class="transition-row">
+                <p>But</p>
+                <video class="transition-video" autoplay muted playsinline loop>
+                    <source src="Assets/esc_key.webm" type="video/webm">
+                </video>
+                <p>doesn't lead outside.</p>
+            </div>
+            <p>It leads deeper.</p>
+        </div>
+    </div>
+    <div class="scroll-indicator">
+    
+        <img src="Assets/scroll.svg" alt="Scroll down">
+    </div>
+</section>
+
+
+
+<section class="figma-loading">
+  <div class="loading-images">
+   <img
+       src="Assets/Figma.png"
+      class="Figma-logo"
+    >
+    <img
+       src="Assets/figma_filename.png"
+      class="Figma-filename"
+    >
+  </div>
+    <div class="loading-bar-container">
+        <div class="loading-bar-progress"></div>
+    </div>
+
+</section>
+
+<div class="notification-overlay"></div>
+
+<section class="figma-scene">
+    <div class="game-world">
+        <div class="platforms-container">
+            <!-- Platforms styled like Figma rectangles -->
+            <img class="game-platform" src="Assets/figma_scene/Search.png" style="width: 800px; left: 0; bottom: -250px;">
+
+            <img class="game-platform" src="Assets/figma_scene/smallComment.png" style="width: 600px; left: 900px; bottom: 70px;">
+
+            <img class="game-platform jump-pad" src="Assets/figma_scene/Jumppad/Jump Pad_00.png" style="width: 150px; left: 1650px; bottom: 100px;">
+
+            <img class="game-platform" src="Assets/figma_scene/BigComment.png" style="width: 600px; left: 1900px; bottom: -150px;">
+
+            <img class="game-platform" src="Assets/figma_scene/export.jpg" style="width: 300px; left: 2900px; bottom: 100px;">
+
+        </div>
+        <div class="game-character"></div>
+    </div>
+    <div class="exporting-images">
+        <img
+            src="Assets/figma_scene/export_text.png"
+            class="export-text"
+          >
+          <div class="loading-bar-container">
+              <div class="loading-bar-progress"></div>
+          </div>
+          <img
+            src="Assets/figma_scene/export_text_2.png"
+            class="export-filename"
+          >
+    </div>
+    <div class="figma-overlay">
+
+        <p class= "main-text">
+            
+        </p>
+        <p class="sub-text">
+        </p>
+    </div>
+
+    <a href="https://studiomesmer.com/deadline" class="play-button-link top-right-btn">
+        <img src="Assets/PlayButton.svg" alt="Play Now" style="height: 50px;">
+    </a>
+</section>
+
+<section class="final-section">
+    <p class="final-text">
+        He made it. Can you?
+    </p>
+    <div class="final-cta">
+      <img
+                src="Assets/DeadLine.svg"
+                class="hero-art"
+            >
+            <img class="character char-chair-L" src="Assets/Char_Chair.svg">
+
+            <img class="character char-front-L" src="Assets/Char_Front.svg">
+        
+            <img class="character char-side-L" src="Assets/Char_Side.svg">
+            
+            <img class="character char-front-R" src="Assets/Char_Front.svg">
+            
+            <img class="character char-chair-R" src="Assets/Char_Chair.svg">
+
+        <a href="https://studiomesmer.com/deadline" class="play-button-link">
+            <img src="Assets/PlayButton.svg" alt="Play Now" style="height: 50px;">
+        </a>
+
+    </div>
+</section>
+
+    <!-- GSAP -->
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+
+    <!-- LENIS -->
+
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.16/dist/lenis.min.js"></script>
+
+
+    <!-- THREE -->
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+
+
+    <!-- GLTF LOADER -->
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
+
+    <!-- FBX LOADER -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/FBXLoader.js"></script>
+
+    <!-- ORBIT CONTROLS -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
+
+
+    <!-- YOUR SCRIPTS -->
+
+    <script src="js/main.js"></script>
+
+    <script src="js/character.js"></script>
+
+    <script src="js/hero.js"></script>
+
+    <script src="js/narrative.js"></script>
+
+    <script src="js/figma-scene.js"></script>
+
+    <!-- <script src="js/three-keyboard.js"></script>
+
+    <script src="js/three-character.js"></script> -->
+
+    <script src="js/three-scene.js"></script>
+
+</body>
+</html>
