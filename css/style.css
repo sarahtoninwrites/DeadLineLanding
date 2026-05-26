@@ -176,11 +176,10 @@ body {
     position: absolute;
     pointer-events:none;
     z-index:20;
-    filter: grayscale(15);
     transform:none;
+    filter: brightness(1.5) grayscale(5);
 
 }
-
 
 .subtitle {
     margin-top: 200px;
@@ -268,7 +267,6 @@ body {
     overflow: visible;
 }
 
-
 .keyboard-char {
 
     object-fit: cover;
@@ -329,7 +327,6 @@ body {
 .sub-text {
 
     font-size: 24px;
-
     color: rgba(255,255,255,0.6);
 
 }

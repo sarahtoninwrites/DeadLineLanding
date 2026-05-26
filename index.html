@@ -48,6 +48,14 @@
       right: 30px;
       bottom: auto;
     }
+    .keyboard-char {
+      position: absolute;
+      bottom: 25%;
+      left: 40%;
+      width: 18vw;
+      z-index: 5;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
@@ -84,18 +92,7 @@
             
             <img class="character char-front-R" src="Assets/Char_Front.svg">
             
-            <!-- <img class="character char-chair-R" src="http://deadlinelanding.local/wp-content/uploads/2026/05/needs-rotation.svg"> -->
-            <video
-            class="character walking-character"
-            loop
-            muted
-            playsinline
-            preload="auto"
-            >
-            
-            <source src="Assets/Char_Animated.webm" type="video/webm">
-            
-            </video>
+            <img class="character char-chair-R walking-character" src="Assets/char_walking/0000.png">
 
         <p class="subtitle"> A game about escaping the one thing you can never outrun.</p>
         
@@ -120,9 +117,11 @@
     <video
         class="keyboard-char"
         muted
+        autoplay
+        loop
         playsinline
     >
-        <source src="Assets/Keyboard_Animated_Char.webm" type="video/webm">
+        <source src="Assets/char_video.webm" type="video/webm">
     </video>
 
     <div class="keyboard-overlay">
@@ -154,10 +153,9 @@
             <p>It leads deeper.</p>
         </div>
     </div>
-    <!-- <div class="scroll-indicator">
-    
+    <div class="scroll-indicator transition-scroll" style="opacity: 0; visibility: hidden;">
         <img src="Assets/scroll.svg" alt="Scroll down">
-    </div> -->
+    </div>
 </section>
 
 

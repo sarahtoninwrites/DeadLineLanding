@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById('three-keyboard-container');
-    const charContainer = document.getElementById('three-character-container');
-    if (!container || !charContainer || !window.THREE || !THREE.GLTFLoader || !THREE.OrbitControls) return;
+    if (!container || !window.THREE || !THREE.GLTFLoader || !THREE.OrbitControls) return;
 
     // --- SCENE SETUP ---
     const scene = new THREE.Scene();
@@ -26,24 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.1);
     directionalLight.position.set(10, 20, 15);
     scene.add(directionalLight);
-
-    // --- CHARACTER SCENE SETUP ---
-    const charScene = new THREE.Scene();
-    const charCamera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
-    charCamera.position.set(0, 1, 3);
-    charCamera.lookAt(0, 0, 0);
-
-    const charRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    charRenderer.setSize(300, 300); // Should match CSS dimensions
-    charRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    charContainer.appendChild(charRenderer.domElement);
-
-    // Character Lighting
-    const charAmbient = new THREE.AmbientLight(0xffffff, 1.0);
-    charScene.add(charAmbient);
-    const charDirLight = new THREE.DirectionalLight(0xffffff, 1.0);
-    charDirLight.position.set(5, 5, 5);
-    charScene.add(charDirLight);
 
     // --- LOADING MODELS ---
     const loader = new THREE.GLTFLoader();
@@ -104,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Load Character
     loader.load('Assets/3D_Models/3DCharacter.glb', (gltf) => {
         const character = gltf.scene;
-        charScene.add(character);
+        scene.add(character);
 
         // --- ANIMATION SETUP ---
         if (gltf.animations && gltf.animations.length > 0) {
@@ -119,19 +100,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // --- MANUAL POSITIONING ---
-        character.position.set(0, 0, 0); // Adjust to center vertically in corner box
-        character.rotation.set(0, 0, 0);
-        character.scale.set(1000, 1000, 1000);
+        // Scale down and position the character on the keyboard
+        character.scale.set(0.005, 0.005, 0.005); 
+        character.position.set(-5, 0.2, 0.5); 
+        character.rotation.y = Math.PI / 2; // Face right
 
-        // Auto-frame character within its small corner scene
-        const box = new THREE.Box3().setFromObject(character);
-        const center = box.getCenter(new THREE.Vector3());
-        const size = box.getSize(new THREE.Vector3());
-        const maxDim = Math.max(size.x, size.y, size.z);
-        const fov = charCamera.fov * (Math.PI / 180);
-        let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
-        charCamera.position.set(center.x, center.y + (maxDim * 0.1), center.z + cameraZ * 1.5);
-        charCamera.lookAt(center);
+        // Sync character movement with narrative.js scroll setup
+        if (window.gsap && window.ScrollTrigger) {
+            gsap.to(character.position, {
+                x: 5, // End position across the keyboard
+                ease: "none",
+                scrollTrigger: {
+                    trigger: ".keyboard-scene",
+                    start: "top top",
+                    end: "+=3000",
+                    scrub: true
+                }
+            });
+        }
 
         console.log("Character loaded successfully");
     }, undefined, (error) => {
@@ -171,7 +157,6 @@ document.addEventListener("DOMContentLoaded", () => {
         
         // Render both scenes
         renderer.render(scene, activeCamera);
-        charRenderer.render(charScene, charCamera);
     }
     animate();
 
@@ -181,8 +166,5 @@ document.addEventListener("DOMContentLoaded", () => {
         activeCamera.aspect = window.innerWidth / window.innerHeight;
         activeCamera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
-
-        // Character resize (maintains square ratio for corner box)
-        charCamera.updateProjectionMatrix();
     });
 });

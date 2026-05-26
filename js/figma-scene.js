@@ -2,6 +2,29 @@ document.addEventListener("DOMContentLoaded", () => {
     gsap.registerPlugin(ScrollTrigger);
 
     // -----------------------------
+    // TRANSITION SECTION LOCK
+    // -----------------------------
+    let transitionLocked = false;
+    const transitionTrigger = ScrollTrigger.create({
+        trigger: ".transition-section",
+        start: "top top",
+        pin: true,
+        onEnter: (self) => {
+            if (!transitionLocked) {
+                transitionLocked = true;
+                if (window.lenis) window.lenis.stop();
+                
+                gsap.delayedCall(2, () => {
+                    if (window.lenis) window.lenis.start();
+                    gsap.to(".transition-scroll", { autoAlpha: 1, duration: 2.5 });
+                    self.kill();
+                    ScrollTrigger.refresh();
+                });
+            }
+        }
+    });
+
+    // -----------------------------
     // FIGMA LOADING BAR
     // -----------------------------
     let burstTriggered = false;
