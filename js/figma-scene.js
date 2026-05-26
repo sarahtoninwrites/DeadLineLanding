@@ -301,28 +301,31 @@ document.addEventListener("DOMContentLoaded", () => {
     // -----------------------------
     // FINAL SECTION ANIMATION
     // -----------------------------
-    let finalReplayTriggered = false;
-    gsap.from(".final-text", {
+    const finalTl = gsap.timeline({
+        scrollTrigger: {
+            trigger: ".final-section",
+            start: "top 70%", // Trigger slightly earlier for better visibility
+            toggleActions: "play none none none"
+        }
+    });
+
+    finalTl.from(".final-text", {
         opacity: 0,
         y: 100,
         scale: 0.8,
         duration: 1.5,
-        ease: "power4.out",
-        scrollTrigger: {
-            trigger: ".final-section",
-            start: "top 80%",
-            toggleActions: "play none none reverse",
-            onEnter: () => {
-                if (finalReplayTriggered) return;
-                finalReplayTriggered = true;
-
-                // Wait a few seconds, then transition to the replay screen
-                gsap.delayedCall(4, () => {
-                    const tl = gsap.timeline();
-                    tl.to(".final-text", { opacity: 0, y: -40, duration: 2, ease: "power2.inOut" })
-                      .to(".final-cta", { opacity: 1, visibility: "visible", duration: 1.5, ease: "power2.inOut" }, "-=0.5");
-                });
-            }
-        }
-    });
+        ease: "power4.out"
+    })
+    .to(".final-text", { 
+        opacity: 0, 
+        y: -40, 
+        duration: 1.5, 
+        ease: "power2.inOut" 
+    }, "+=2.5") // Wait 2.5 seconds before starting the fade out
+    .to(".final-cta", { 
+        opacity: 1, 
+        visibility: "visible", 
+        duration: 1.5, 
+        ease: "power2.inOut" 
+    }, "-=0.5");
 });
