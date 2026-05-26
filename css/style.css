@@ -80,6 +80,7 @@ body {
     height: 300px;
     z-index: 10; /* Higher than the keyboard container's z-index */
     pointer-events: none;
+    overflow: visible;
     
 }
 
@@ -262,8 +263,9 @@ body {
     transform: translateY(120px);
     object-fit: cover;
     transition:
-        opacity 1s ease,
-        transform 1s ease;
+    opacity 2s ease,
+    transform 2s ease;
+    overflow: visible;
 }
 
 
@@ -548,4 +550,28 @@ body {
     font-size:96px;
     text-align: center;
     letter-spacing: -0.05em;
+}
+
+.boss-cursor {
+    position: absolute;
+    bottom: -300px;
+    right: -300px;
+    width: 250px;
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0;
+}
+.boss-aura {
+    position: absolute;
+    width: 400;
+    height: auto;
+}
+.boss-icon {
+    position: relative;
+    width: 250px;
+    height: auto;
 }

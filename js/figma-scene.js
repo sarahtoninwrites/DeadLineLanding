@@ -68,7 +68,8 @@ document.addEventListener("DOMContentLoaded", () => {
             { main: "You thought the keyboard was bad.", sub: "" },
             { main: "This is a live Figma file. \nSomeone is in here with you. \nRun.", sub: "" },
             { main: "He's reviewing the file. He has a laser. You have an office chair.", sub: "He cannot see you — until he can." },
-            { main: "The comments are physical here!", sub: "" }
+            { main: "The comments are physical here!", sub: "" },
+            { main: "", sub: "" }
         ];
 
         function changeFigmaText(index) {
@@ -97,6 +98,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         }
+
+        // Add Level Indicator
+        const levelIndicator = document.createElement('p');
+        levelIndicator.style.cssText = "position:absolute; top:40px; left:40px; font-family:'Manrope',sans-serif; font-size:18px; font-weight:800; color:white; z-index:1000; letter-spacing:0.2em; margin:0;";
+        levelIndicator.textContent = 'LV 2';
+        const figmaScene = document.querySelector('.figma-scene');
+        if (figmaScene) figmaScene.appendChild(levelIndicator);
+
+        // Create boss cursor element
+        const bossCursor = document.createElement('div');
+        bossCursor.classList.add('boss-cursor');
+        bossCursor.innerHTML = `
+            <img src="Assets/figma_scene/Aura.png" class="boss-aura">
+            <img src="Assets/figma_scene/Boss.png" class="boss-icon">
+        `;
+        if (figmaScene) figmaScene.appendChild(bossCursor);
 
         // Initialize first text beat
         if (figmaMainText && figmaSubText) {
@@ -196,6 +213,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 end: "+=6000",
                 scrub: 1,
                 pin: true,
+                snap: {
+                    snapTo: (value, self) => {
+                        // Get all label progress values (0 to 1) and sort them
+                        const labelTimes = Object.values(self.animation.labels);
+                        const duration = self.animation.totalDuration();
+                        const positions = labelTimes.map(t => t / duration).sort((a, b) => a - b);
+                        // Find the first label position that is ahead of current scroll
+                        return positions.find(p => p >= value) || value;
+                    },
+                    duration: { min: 0.1, max: 0.5 },
+                    delay: 0.1,
+                    ease: "power1.inOut"
+                },
                 markers: false,
                 onUpdate: (self) => {
                     if (self.direction === -1) {
@@ -209,12 +239,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Character exploration sequence
         gameTl
+            .addLabel("start")
             .call(changeFigmaText, [0], 0)
             // Walk across first platform
             .to(".game-character", { x: 580, ease: "none", onStart: () => setCharacterState('walk'), onReverseComplete: () => setCharacterState('idle'), duration: 1 })
             // Jump to second platform (curved arc)
             .to(".game-character", { y: -160, x: 750, duration: 0.4, ease: "power1.out" })
             .to(".game-character", { y: -80, x: 950, duration: 0.4, ease: "power1.in", onComplete: () => setCharacterState('idle'), onReverseComplete: () => setCharacterState('walk') })
+            .addLabel("platform2")
             .call(changeFigmaText, [1], "+=0.2")
             // Walk across second platform while world pans (P2 is at 900-1500)
             .to(".game-character", { x: 1480, ease: "none", onStart: () => setCharacterState('walk'), onReverseComplete: () => setCharacterState('idle'), duration: 1 }, "pan")
@@ -222,7 +254,9 @@ document.addEventListener("DOMContentLoaded", () => {
             // Jump down to third platform (curved arc)
             .to(".game-character", { y: -40, x: 1650, duration: 0.4, ease: "power1.out" })
             .to(".game-character", { y: 20, x: 1850, duration: 0.4, ease: "power1.in", onComplete: () => setCharacterState('idle'), onReverseComplete: () => setCharacterState('walk') })
+            .addLabel("platform3")
             .call(changeFigmaText, [2], "+=0.2")
+            .to(".boss-cursor", { bottom: "10%", right: "10%", opacity: 1, duration: 0.8 }, "<")
 
             // Walk across third platform (P3 is at 1800-2400)
             .to(".game-character", { x: 2380, ease: "none", onStart: () => setCharacterState('walk'), onReverseComplete: () => setCharacterState('idle'), duration: 1 }, "pan2")
@@ -230,17 +264,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Jump down to fourth platform (curved arc)
             .to(".game-character", { y: -10, x: 2550, duration: 0.4, ease: "power1.out" })
+            .to(".boss-cursor", { bottom: "-300px", right: "-300px", opacity: 0, duration: 0.8 }, "<")
             .to(".game-character", { y: -80, x: 2850, duration: 0.4, ease: "power1.in", onComplete: () => {
                 setCharacterState('idle');
             }, onReverseComplete: () => setCharacterState('walk') })
+            .addLabel("platform4")
             .call(changeFigmaText, [3], "+=0.2")
 
             // Final world pan with character frozen
             .to(".game-world", { x: "-=800", ease: "none", duration: 2, onStart: () => setCharacterState('idle') }, "final")
+            .addLabel("final_pan")
             
             // Show export UI and animate loader after panning is complete
+            .call(changeFigmaText, [4])
             .to(".exporting-images", { opacity: 1, duration: 0.5 })
-            .to(".exporting-images .loading-bar-progress", { width: "100%", duration: 2, ease: "none" });
+            .to(".exporting-images .loading-bar-progress", { width: "100%", duration: 2, ease: "none" })
+            .addLabel("end");
 
         // Calculate total time (stagger + duration) and add a small pause before fading
         const fadeDelay = (notifCount * 40 / 1000) + 1.5;

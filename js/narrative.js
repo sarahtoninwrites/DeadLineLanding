@@ -8,6 +8,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if(!mainText || !subText) return;
 
+    // Add Level Indicator
+    const levelIndicator = document.createElement('p');
+    levelIndicator.style.cssText = "position:absolute; top:40px; left:40px; font-family:'Manrope',sans-serif; font-size:18px; font-weight:800; color:white; z-index:1000; letter-spacing:0.2em; margin:0;";
+    levelIndicator.textContent = 'LV 1';
+    const keyboardScene = document.querySelector('.keyboard-scene');
+    if (keyboardScene) keyboardScene.appendChild(levelIndicator);
+
 
     // -----------------------------
     // STORY DATA
