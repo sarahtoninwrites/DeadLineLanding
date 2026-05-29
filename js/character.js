@@ -107,7 +107,6 @@ document.addEventListener("DOMContentLoaded", () => {
         // FALL
         characterTimeline.to(character, {
             y: 650,
-            rotation: 32,
             opacity: 0,
             ease: "power4.in",
             duration: 1.2

@@ -447,19 +447,19 @@ document.addEventListener("DOMContentLoaded", () => {
         opacity: 0,
         y: 100,
         scale: 0.8,
-        duration: 1.5,
+        duration: 5,
         ease: "power4.out"
     })
     .to(".final-text", { 
         opacity: 0, 
         y: -40, 
-        duration: 2, 
+        duration: 3, 
         ease: "power2.inOut" 
     }, "+=3") // Wait 2.5 seconds before starting the fade out
     .to(".final-cta", { 
         opacity: 1, 
         visibility: "visible", 
-        duration: 1.5, 
+        duration: 5, 
         ease: "power2.inOut" 
     }, "-=0.5");
 
