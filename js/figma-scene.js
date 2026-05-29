@@ -101,6 +101,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function triggerNotificationChaos() {
         const overlay = document.querySelector('.notification-overlay');
+        const slowNotificationsCount = 3; // Number of notifications to pop slowly
+        const slowStaggerDelay = 200; // ms delay between slow pops
+        const slowPopDuration = 1.5; // seconds for slow pop animation
+        const slowHoldDuration = 2; // seconds for how long slow notifs are visible before fading
+        let lastSlowNotifPopInFinishTime = 0; // Tracks when the last slow notification finishes its pop-in
 
 
         // Switch background: fade in figma-scene and fade out loading content
@@ -113,8 +118,22 @@ document.addEventListener("DOMContentLoaded", () => {
         const notifCount = 50;
         // Define the specific frame numbers you have in your Assets folder here
         const availableFrames = [2705, 2713, 2714, 2715, 2716, 2717, 2718, 2719, 2720, 2721, 2722, 2723, 2724, 2726, 2727,2728,2729];
+        
+        let totalNotificationAnimationEndTime = 0;
 
         for (let i = 0; i < notifCount; i++) {
+            let currentNotificationDelay;
+            let currentPopDuration = 1;
+
+            if (i < slowNotificationsCount) {
+                currentNotificationDelay = i * slowStaggerDelay;
+                currentPopDuration = slowPopDuration;
+                lastSlowNotifPopInFinishTime = Math.max(lastSlowNotifPopInFinishTime, currentNotificationDelay + currentPopDuration * 1000);
+            } else {
+                // Start chaos notifications after the last slow one has popped in and held
+                currentNotificationDelay = lastSlowNotifPopInFinishTime + (slowHoldDuration * 1000) + (i - slowNotificationsCount) * 40;
+            }
+
             setTimeout(() => {
                 const img = document.createElement('img');
                 
@@ -133,12 +152,20 @@ document.addEventListener("DOMContentLoaded", () => {
                         x: Math.random() * (window.innerWidth - 300), 
                         y: Math.random() * (window.innerHeight - 100), 
                         opacity: 1, 
-                        scale: 1.5, 
-                        duration: 1, 
-                        ease: "back.out(1.5)" 
+                        scale: 1.5,
+                        duration: currentPopDuration,
+                        ease: "back.out(1.5)",
+                        onComplete: () => {
+                            if (i < slowNotificationsCount) {
+                                // Fade out slow notifications individually after a hold
+                                gsap.to(img, { opacity: 0, duration: 0.5, delay: slowHoldDuration });
+                            }
+                        }
                     }
                 );
-            }, i * 40); // Staggered delay to make them "bubble up" progressively
+            }, currentNotificationDelay);
+
+            totalNotificationAnimationEndTime = Math.max(totalNotificationAnimationEndTime, currentNotificationDelay + currentPopDuration * 1000);
         }
 
         // -----------------------------
@@ -411,7 +438,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .addLabel("end");
 
         // Calculate total time (stagger + duration) and add a small pause before fading
-        const fadeDelay = (notifCount * 40 / 1000) + 1.5;
+        const fadeDelay = (totalNotificationAnimationEndTime / 1000) + 1.5;
 
         gsap.to([overlay, ".notification-overlay"], {
             opacity: 0,
