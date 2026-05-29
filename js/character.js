@@ -69,8 +69,14 @@ document.addEventListener("DOMContentLoaded", () => {
             scrollTrigger: {
                 trigger: ".deadline-hero",
                 start: "top top",
-                end: "+=2000", // Increased to slow down the movement speed relative to scroll
-                scrub: 0.7, // Higher scrub value smooths out jittery scroll inputs
+                end: "+=2500", // Increased to give the hero section more weight
+                scrub: 0.5, // Reduced from 0.7 for more responsive control
+                snap: {
+                    snapTo: [0, 0.7, 1], // Snap to start, landing, and end of fall
+                    duration: { min: 0.2, max: 0.5 },
+                    delay: 0.1,
+                    ease: "power1.inOut"
+                },
                 invalidateOnRefresh: true
             }
         });
@@ -147,20 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        // // Walk on keyboard (simulating z-axis forward movement)
-        // gsap.to(keyboardVideo, {
-        //     x: KEYBOARD_VIDEO_WALK_FINAL_X_OFFSET,
-        //     y: KEYBOARD_VIDEO_WALK_FINAL_Y_OFFSET,
-        //     scale: KEYBOARD_VIDEO_WALK_FINAL_SCALE,
-        //     ease: "none",
-        //     scrollTrigger: {
-        //         trigger: ".keyboard-scene",
-        //         start: "top top",
-        //         end: "+=3000",
-        //         scrub: true,
-        //         invalidateOnRefresh: true
-        //     }
-        // });
+
     }
 
     // -----------------------------

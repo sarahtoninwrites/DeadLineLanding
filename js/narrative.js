@@ -147,9 +147,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             start: "top top",
 
-            end: "+=3000",
+            end: "+=4500", // Increased distance to provide a buffer at the end
 
-            scrub: 1,
+            scrub: 0.5, // Reduced lag so the animation stays closer to the scrollbar
 
             pin: true
 
@@ -166,5 +166,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       .call(() => changeText(2), null, 2)
 
-      .call(() => changeText(3), null, 3);
+      .call(() => changeText(3), null, 3)
+      .to({}, { duration: 1.5 }); // Adds an intentional pause/hold after the last line appears
 });

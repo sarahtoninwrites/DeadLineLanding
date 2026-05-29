@@ -1,55 +1,115 @@
 document.addEventListener("DOMContentLoaded", () => {
     gsap.registerPlugin(ScrollTrigger);
 
+    let gameTl;
+
+    // Initially hide the figma scene to facilitate a background transition during chaos
+    gsap.set(".figma-scene", { opacity: 0 });
+
     // -----------------------------
     // TRANSITION SECTION LOCK
     // -----------------------------
-    let transitionLocked = false;
-    const transitionTrigger = ScrollTrigger.create({
-        trigger: ".transition-section",
-        start: "top top",
-        pin: true,
-        onEnter: (self) => {
-            if (!transitionLocked) {
-                transitionLocked = true;
-                if (window.lenis) window.lenis.stop();
-                
-                gsap.delayedCall(2, () => {
-                    if (window.lenis) window.lenis.start();
-                    gsap.to(".transition-scroll", { autoAlpha: 1, duration: 2.5 });
-                    self.kill();
-                    ScrollTrigger.refresh();
-                });
-            }
+    window.isTransitionLocked = false;
+
+    // Block native scroll events to prevent "scroll buffering" during the lock
+    const blockScroll = (e) => {
+        if (window.isTransitionLocked) e.preventDefault();
+    };
+    window.addEventListener('wheel', blockScroll, { passive: false });
+    window.addEventListener('touchmove', blockScroll, { passive: false });
+    window.addEventListener('keydown', (e) => {
+        if (window.isTransitionLocked && ["Space", "ArrowUp", "ArrowDown", "PageUp", "PageDown"].includes(e.code)) {
+            e.preventDefault();
         }
-    });
+    }, { passive: false });
 
     // -----------------------------
-    // FIGMA LOADING BAR
+    // TRANSITION SECTION CARD FLIP
     // -----------------------------
+    const transSection = document.querySelector(".transition-section");
+    const loadingSection = document.querySelector(".figma-loading");
+    
+    // Move the loading section inside the transition container so they pin together
+    if (transSection && loadingSection) {
+        transSection.appendChild(loadingSection);
+    }
+
     let burstTriggered = false;
 
-    gsap.to(".figma-loading .loading-bar-progress", {
+    gsap.set(".transition-section", { perspective: 2000 });
+    gsap.set(".transition-content", { transformStyle: "preserve-3d", backfaceVisibility: "hidden" });
+    gsap.set(".figma-loading", { 
+        position: "absolute",
+        top: 0,
+        left: 0,
         width: "100%",
-        ease: "none",
+        height: "100%",
+        transformStyle: "preserve-3d", 
+        backfaceVisibility: "hidden",
+        rotationY: 180,
+        autoAlpha: 0,
+        zIndex: 5
+    });
+
+    const transitionTl = gsap.timeline({
         scrollTrigger: {
-            trigger: ".figma-loading",
+            trigger: ".transition-section",
             start: "top top",
-            end: "+=1000",
-            scrub: true,
+            end: "+=6000", // Increased to accommodate flip AND loading bar
             pin: true,
-            onUpdate: (self) => {
-                // Trigger chaos as we approach 100%
-                if (self.progress > 0.9 && !burstTriggered) {
-                    burstTriggered = true;
-                    triggerNotificationChaos();
+            scrub: 0.5,
+            onEnter: () => {
+                if (!window.isTransitionLocked) {
+                    window.isTransitionLocked = true;
+                    if (window.lenis) window.lenis.stop();
+                    
+                    gsap.delayedCall(2, () => {
+                        window.isTransitionLocked = false;
+                        if (window.lenis) window.lenis.start();
+                        gsap.to(".transition-scroll", { autoAlpha: 1, duration: 1 });
+                    });
                 }
             }
         }
     });
 
+    // Flip the current section out and pull the next section in
+    transitionTl.to(".transition-content", {
+        rotationY: -180,
+        autoAlpha: 0,
+        duration: 1.5,
+        ease: "power2.inOut"
+    }, 0.5)
+    .to(".figma-loading", {
+        rotationY: 0,
+        autoAlpha: 1,
+        duration: 1.5,
+        ease: "power2.inOut"
+    }, 0.5)
+    // Animate the loading bar progress in the same timeline sequence
+    .to(".figma-loading .loading-bar-progress", {
+        width: "100%",
+        duration: 4,
+        ease: "none",
+        onUpdate: function() {
+            if (this.progress() > 0.9 && !burstTriggered) {
+                burstTriggered = true;
+                triggerNotificationChaos();
+            }
+        }
+    }, "+=0.5");
+
     function triggerNotificationChaos() {
         const overlay = document.querySelector('.notification-overlay');
+
+
+        // Switch background: fade in figma-scene and fade out loading content
+        gsap.to(".figma-scene", { opacity: 1, duration: 1.5, ease: "power2.inOut" });
+
+        // Prevent character movement during the notification transition
+        if (typeof gameTl !== 'undefined' && gameTl.scrollTrigger) gameTl.scrollTrigger.disable();
+
+
         const notifCount = 50;
         // Define the specific frame numbers you have in your Assets folder here
         const availableFrames = [2705, 2713, 2714, 2715, 2716, 2717, 2718, 2719, 2720, 2721, 2722, 2723, 2724, 2726, 2727,2728,2729];
@@ -167,6 +227,24 @@ document.addEventListener("DOMContentLoaded", () => {
         preloadFrames('Assets/figma_scene/idle_animation', 10, idleFramesURLs);
         preloadFrames('Assets/figma_scene/walk_animation', 16, walkFramesURLs);
 
+        let timelineState = 'idle';
+        let currentAnimationState = 'idle';
+        let isScrolling = false;
+        let figmaScrollTimeout;
+
+        function setTimelineState(state) {
+            timelineState = state;
+            updateFigmaCharAnimation();
+        }
+
+        function updateFigmaCharAnimation() {
+            let target = (timelineState === 'walk' && isScrolling) ? 'walk' : 'idle';
+            if (target !== currentAnimationState) {
+                currentAnimationState = target;
+                setCharacterState(target);
+            }
+        }
+
         // Helper to switch sprite sheets
         function setCharacterState(state) {
             if (currentFrameTween) {
@@ -196,6 +274,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // Initial State
+        currentAnimationState = 'idle';
         setCharacterState('idle');
 
         // -----------------------------
@@ -229,24 +308,17 @@ document.addEventListener("DOMContentLoaded", () => {
         // -----------------------------
         // 2D GAMEPLAY EXPLORATION
         // -----------------------------
-        const gameTl = gsap.timeline({
+    gameTl = gsap.timeline({
             scrollTrigger: {
                 trigger: ".figma-scene",
                 start: "top top",
                 end: "+=6000",
-                scrub: 1,
+                scrub: 0.5, // Reduced for a tighter, more grounded feel
                 pin: true,
                 snap: {
-                    snapTo: (value, self) => {
-                        // Get all label progress values (0 to 1) and sort them
-                        const labelTimes = Object.values(self.animation.labels);
-                        const duration = self.animation.totalDuration();
-                        const positions = labelTimes.map(t => t / duration).sort((a, b) => a - b);
-                        // Find the first label position that is ahead of current scroll
-                        return positions.find(p => p >= value) || value;
-                    },
-                    duration: { min: 0.1, max: 0.5 },
-                    delay: 0.1,
+                    snapTo: "labels",
+                    duration: { min: 0.2, max: 0.6 },
+                    delay: 0.05,
                     ease: "power1.inOut"
                 },
                 markers: false,
@@ -256,6 +328,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     } else {
                         gsap.set(".game-character", { scaleX: 1 });
                     }
+
+                    isScrolling = true;
+                    updateFigmaCharAnimation();
+
+                    window.clearTimeout(figmaScrollTimeout);
+                    figmaScrollTimeout = setTimeout(() => {
+                        isScrolling = false;
+                        updateFigmaCharAnimation();
+                    }, 100);
                 }
             }
         });
@@ -264,16 +345,20 @@ document.addEventListener("DOMContentLoaded", () => {
         gameTl
             .addLabel("start")
             .call(changeFigmaText, [0], 0)
+            .to({}, { duration: 0.5 }) // Initial buffer
             // Walk across first platform
             .to(".game-character", { x: 580, ease: "none", onStart: () => setCharacterState('walk'), onReverseComplete: () => setCharacterState('idle'), duration: 1 })
+
             // Jump to second platform (curved arc)
             .to(".game-character", { y: -160, x: 750, duration: 0.4, ease: "power1.out" })
             .to(".game-character", { y: -80, x: 950, duration: 0.4, ease: "power1.in", onComplete: () => setCharacterState('idle'), onReverseComplete: () => setCharacterState('walk') })
             .addLabel("platform2")
             .call(changeFigmaText, [1], "+=0.2")
+
             // Walk across second platform while world pans (P2 is at 900-1500)
-            .to(".game-character", { x: 1480, ease: "none", onStart: () => setCharacterState('walk'), onReverseComplete: () => setCharacterState('idle'), duration: 1 }, "pan")
+            .to(".game-character", { x: 1480, ease: "none", onStart: () => setCharacterState('walk'), onReverseComplete: () => setCharacterState('idle'), duration: 1 }, "pan+=0.5")
             .to(".game-world", { x: "-=1000", ease: "none" }, "pan")
+            
             // Jump down to third platform (curved arc)
             .to(".game-character", { y: -40, x: 1650, duration: 0.4, ease: "power1.out" })
             .to(".game-character", { y: 20, x: 1850, duration: 0.4, ease: "power1.in", onComplete: () => setCharacterState('idle'), onReverseComplete: () => setCharacterState('walk') })
@@ -282,7 +367,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .to(".boss-cursor", { bottom: "10%", right: "10%", opacity: 1, duration: 0.8 }, "<")
 
             // Walk across third platform (P3 is at 1800-2400)
-            .to(".game-character", { x: 2380, ease: "none", onStart: () => setCharacterState('walk'), onReverseComplete: () => setCharacterState('idle'), duration: 1 }, "pan2")
+            .to(".game-character", { x: 2380, ease: "none", onStart: () => setCharacterState('walk'), onReverseComplete: () => setCharacterState('idle'), duration: 1 }, "pan2+=0.5")
             .to(".game-world", { x: "-=1000", ease: "none" }, "pan2")
 
             // Jump down to fourth platform (curved arc)
@@ -295,7 +380,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .call(changeFigmaText, [3], "+=0.2")
 
             // Final world pan with character frozen
-            .to(".game-world", { x: "-=800", ease: "none", duration: 2, onStart: () => setCharacterState('idle') }, "final")
+            .to(".game-world", { x: "-=800", ease: "none", duration: 2, onStart: () => setCharacterState('idle') }, "final+=0.5")
             .addLabel("final_pan")
             
             // Show export UI and animate loader after panning is complete
@@ -314,6 +399,11 @@ document.addEventListener("DOMContentLoaded", () => {
             ease: "power2.inOut",
             onComplete: () => {
                 overlay.innerHTML = ''; // Clean up DOM
+                // Re-enable gameplay scroll now that the transition is complete
+                if (gameTl && gameTl.scrollTrigger) {
+                    gameTl.scrollTrigger.enable();
+                    ScrollTrigger.refresh();
+                }
             }
         });
 
@@ -342,13 +432,14 @@ document.addEventListener("DOMContentLoaded", () => {
     .to(".final-text", { 
         opacity: 0, 
         y: -40, 
-        duration: 1.5, 
+        duration: 2, 
         ease: "power2.inOut" 
-    }, "+=2.5") // Wait 2.5 seconds before starting the fade out
+    }, "+=3") // Wait 2.5 seconds before starting the fade out
     .to(".final-cta", { 
         opacity: 1, 
         visibility: "visible", 
         duration: 1.5, 
         ease: "power2.inOut" 
     }, "-=0.5");
+
 });

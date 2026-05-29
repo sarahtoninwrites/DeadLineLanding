@@ -82,53 +82,14 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error('Error loading keyboard:', error);
     });
 
-    // Load Character
-    loader.load('Assets/3D_Models/3DCharacter.glb', (gltf) => {
-        const character = gltf.scene;
-        scene.add(character);
-
-        // --- ANIMATION SETUP ---
-        if (gltf.animations && gltf.animations.length > 0) {
-            const characterMixer = new THREE.AnimationMixer(character);
-            characterMixer.timeScale = 0; 
-            gltf.animations.forEach((clip) => {
-                const action = characterMixer.clipAction(clip);
-                action.setLoop(THREE.LoopRepeat);
-                action.play();
-            });
-            mixers.push(characterMixer);
-        }
-
-        // --- MANUAL POSITIONING ---
-        // Scale down and position the character on the keyboard
-        character.scale.set(0.005, 0.005, 0.005); 
-        character.position.set(-5, 0.2, 0.5); 
-        character.rotation.y = Math.PI / 2; // Face right
-
-        // Sync character movement with narrative.js scroll setup
-        if (window.gsap && window.ScrollTrigger) {
-            gsap.to(character.position, {
-                x: 5, // End position across the keyboard
-                ease: "none",
-                scrollTrigger: {
-                    trigger: ".keyboard-scene",
-                    start: "top top",
-                    end: "+=3000",
-                    scrub: true
-                }
-            });
-        }
-
-        console.log("Character loaded successfully");
-    }, undefined, (error) => {
-        console.error('Error loading 3D character:', error);
-    });
-
     // --- SCROLL ANIMATION TRIGGER ---
     let targetSpeed = 0;
     let currentSpeed = 0;
     let scrollTimeout;
     window.addEventListener('scroll', () => {
+        // Ignore scroll detection if the transition is locked
+        if (window.isTransitionLocked) return;
+
         targetSpeed = 1;
         window.clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {

@@ -534,7 +534,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: transparent;
+    background: #0F0404;
     position: relative;
     z-index: 5;
 }
