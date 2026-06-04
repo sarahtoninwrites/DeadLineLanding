@@ -6,8 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     gsap.to(".hero-zoom-wrapper", {
 
-        scale: 2.12,
-        x: "15vw",
+        scale: 2.3,
+        x: () => window.innerWidth <= 768 ? "8vw" : "11vw",
 
         ease: "none",
 
@@ -17,10 +17,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             start: "top top",
 
-            end: "+=2000", // Increased to match the character timeline and slow down the zoom
+            end: () => window.innerWidth <= 768 ? "+=1200" : "+=2000",
 
             scrub: true,
-            pin: true
+            pin: true,
+            invalidateOnRefresh: true
         }
 
     });

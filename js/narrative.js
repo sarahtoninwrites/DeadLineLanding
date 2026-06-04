@@ -147,9 +147,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             start: "top top",
 
-            end: "+=4500", // Increased distance to provide a buffer at the end
+            end: () => window.innerWidth <= 768 ? "+=2500" : "+=4500",
 
-            scrub: 0.5, // Reduced lag so the animation stays closer to the scrollbar
+            scrub: 0.5,
+            invalidateOnRefresh: true,
 
             pin: true
 

@@ -55,9 +55,10 @@ document.addEventListener("DOMContentLoaded", () => {
         scrollTrigger: {
             trigger: ".transition-section",
             start: "top top",
-            end: "+=6000", // Increased to accommodate flip AND loading bar
+            end: () => window.innerWidth <= 768 ? "+=3500" : "+=6000",
             pin: true,
             scrub: 0.5,
+            invalidateOnRefresh: true,
             onEnter: () => {
                 if (!window.isTransitionLocked) {
                     window.isTransitionLocked = true;
@@ -345,9 +346,10 @@ document.addEventListener("DOMContentLoaded", () => {
             scrollTrigger: {
                 trigger: ".figma-scene",
                 start: "top top",
-                end: "+=6000",
+                end: () => window.innerWidth <= 768 ? "+=4000" : "+=6000",
                 scrub: 0.5, // Reduced for a tighter, more grounded feel
                 pin: true,
+                invalidateOnRefresh: true,
                 snap: {
                     snapTo: "labels",
                     duration: { min: 0.2, max: 0.6 },

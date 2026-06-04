@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
             scrollTrigger: {
                 trigger: ".deadline-hero",
                 start: "top top",
-                end: "+=2500", // Increased to give the hero section more weight
+                end: () => window.innerWidth <= 768 ? "+=1500" : "+=2500",
                 scrub: 0.5, // Reduced from 0.7 for more responsive control
                 snap: {
                     snapTo: [0, 0.7, 1], // Snap to start, landing, and end of fall

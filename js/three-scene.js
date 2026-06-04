@@ -29,55 +29,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- LOADING MODELS ---
     const loader = new THREE.GLTFLoader();
     let mixers = [];
-    let keyboardModel = null;
-
-    // --- RESPONSIVE FRAMING FUNCTION ---
-    function updateCameraFraming() {
-        if (!keyboardModel) return;
-
-        const aspect = window.innerWidth / window.innerHeight;
-
-        // Scale the model itself down slightly for smaller/portrait screens
-        const modelScale = aspect < 1.0 ? 0.8 : 1.0;
-        keyboardModel.scale.set(modelScale, modelScale, modelScale);
-
-        const box = new THREE.Box3().setFromObject(keyboardModel);
-        const center = box.getCenter(new THREE.Vector3());
-        const size = box.getSize(new THREE.Vector3());
-
-        // Get the FOV in radians
-        const fov = activeCamera.fov * (Math.PI / 180);
-
-        // Calculate the distance needed to fit the object vertically and horizontally
-        // We take the max dimension to ensure nothing is clipped
-        const maxDim = Math.max(size.x, size.y, size.z);
-        
-        let cameraZ;
-        if (aspect > 1) {
-            // Landscape: Fit based on vertical FOV
-            cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
-        } else {
-            // Portrait: Fit based on horizontal FOV (which is smaller)
-            // We adjust the distance to account for the narrow aspect ratio
-            cameraZ = Math.abs((maxDim / 2) / Math.tan(fov / 2) / aspect);
-        }
-
-        // Apply zoom factor (padding)
-        // Use a higher padding multiplier on mobile to make the model look "scaled down" in the frame
-        const paddingMultiplier = aspect < 1.0 ? 1.8 : 1.3;
-        cameraZ *= paddingMultiplier;
-
-        // Set position: centered X, slightly raised Y, and calculated Z distance
-        activeCamera.position.set(center.x, center.y + (maxDim * 0.2), center.z + cameraZ);
-        activeCamera.lookAt(center);
-        
-        if (controls) controls.target.copy(center);
-    }
 
     // Load Keyboard
     loader.load('Assets/3D_Models/keyboard.glb', (gltf) => {
         const keyboard = gltf.scene;
-        keyboardModel = keyboard;
         scene.add(keyboard);
 
         // --- ANIMATION SETUP ---
@@ -106,7 +61,21 @@ document.addEventListener("DOMContentLoaded", () => {
             activeCamera.updateProjectionMatrix();
             console.log("Using camera from GLB model");
         } else {
-            updateCameraFraming();
+            // Auto-frame if no model camera is found
+            const box = new THREE.Box3().setFromObject(keyboard);
+            const center = box.getCenter(new THREE.Vector3());
+            const size = box.getSize(new THREE.Vector3());
+
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const fov = activeCamera.fov * (Math.PI / 180);
+            let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
+
+            // CUSTOMIZE ZOOM: Change 1.2 to a lower number (like 0.8) to get closer
+            cameraZ *= 1.2; 
+            
+            activeCamera.position.set(center.x, center.y + (maxDim * 0.2), center.z + cameraZ);
+            activeCamera.lookAt(center);
+            console.log("Auto-framed camera (No GLB camera found)");
         }
 
     }, undefined, (error) => {
@@ -158,6 +127,5 @@ document.addEventListener("DOMContentLoaded", () => {
         activeCamera.aspect = window.innerWidth / window.innerHeight;
         activeCamera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
-        updateCameraFraming();
     });
 });
