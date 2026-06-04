@@ -30,7 +30,7 @@ body {
 .corner-svg {
 
     position: fixed;
-    top:150px;
+    top:20%;
     left: 0px;
 
     z-index: 1;
@@ -42,8 +42,8 @@ body {
 
     position: fixed;
 
-    bottom: 20px;
-    right: -200px;
+    bottom: 20%;
+    left: -80%;
     width: 50%;
     z-index: 1;
 
@@ -53,8 +53,8 @@ body {
 
     position: fixed;
 
-    bottom: 100px;
-    right: -100px;
+    bottom: 10%;
+    left: 70%;
     width: 50%;
     /* opacity:60%; */
     z-index: 1;
@@ -72,17 +72,17 @@ body {
     
 }
 
-#three-character-container {
+/* #three-character-container {
     position: absolute;
     bottom: 20px;
     right: 20px;
-    width: 300px; /* Adjust size as needed */
+    width: 300px;
     height: 300px;
-    z-index: 10; /* Higher than the keyboard container's z-index */
+    z-index: 10; 
     pointer-events: none;
     overflow: visible;
     
-}
+} */
 
 
 .hero-stage { 
@@ -97,30 +97,35 @@ body {
 } 
 
 .hero-zoom-wrapper { 
-    height:100vh; 
-    width: 100vw; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    transform-origin: top right; 
-    
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    overflow: visible;
+    transform-origin: top right;
 } 
 
-.hero-art { 
-    position: absolute; 
-    top:200px; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    will-change: transform; 
-    z-index:10;
+.hero-art-container {
+    position: relative;
+    top:2%;
+    width: min(70vw, 1200px);
+    max-height: 70vh;}
+
+.hero-art {
+    width: 100%;
+    height: auto;
+    display: block;
 }
 
 .character {
     position: absolute;
-    width: 7vw;
-
-    z-index: 12;
+    width: 8%;
+    height: auto;
+    z-index: 10;
 	filter: brightness(2) grayscale(5);
 
     pointer-events: none;
@@ -128,51 +133,47 @@ body {
 
 
 .char-chair-L{
-    left: 16%;
-    top: 47%;
-    height:90px;
-    width:auto;
+    left: -3%;
+    top: 70%;
+
 	transform: scaleX(-1) rotate(30.31deg);
 
 }
 .char-front-L{
-    left: 31.25%;
-    top: 30%;
-    
-	height:90px;
-    width:auto;
+    left: 20%;
+    top: 12%;
+    width:5%;
+    height:auto;
+	/* width:4vw;
+    height:auto; */
 
 }
 
 .char-side-L{
-    left: 56.5%;
-    top: 42%;
-    
-	height:90px;
-    width:auto;
+    left: 61%;
+    top: 55%;
 
 }
 .char-front-R{
-    right: 19%;
-    top: 43%;
+    right: 1%;
+    top: 55%;
     
-	height:90px;
-    width:auto;
+	width:5%;
+    height:auto;
 
 }
-.char-chair-R{
+/* .char-chair-R{
     left: 70%;
-    top: 15%;
-    height:90px;
-    width:auto;
+    top: 3%;
+
 	transform: scaleX(1) rotate(30.31deg);
-}
+} */
 
 .walking-character{
-    left: 68%;
-    top: 15%;
-    height:90px;
-    width:auto;
+    left: 82%;
+    top: -45%;
+    width:12%;
+    height:auto;
     position: absolute;
     pointer-events:none;
     z-index:20;
@@ -182,18 +183,18 @@ body {
 }
 
 .subtitle {
-    margin-top: 200px;
+    margin-top: 8vh;
     font-family: 'Manrope', sans-serif;
-    font-size: 24px;
+    font-size: 2vw;
     color: white;
-    line-height: 28.9px;
+    line-height: 1.806vw;
     text-align: center;
 }
 
 .scroll-indicator {
     position: absolute;
 
-    bottom: 80px;
+    bottom: 5rem;
     left: 50%;
 
     transform: translateX(-50%);
@@ -202,7 +203,7 @@ body {
     flex-direction: column;
     align-items: center;
 
-    gap: 10px;
+    gap: 0.6rem;
 
     z-index: 10;
 
@@ -355,7 +356,7 @@ body {
 .transition-subtext {
     font-size: 32px;
     opacity: 50%;
-    width:300px;
+    width: 300px;
     margin-bottom: 100px;
 }
 .transition-text{
@@ -540,11 +541,11 @@ body {
 }
 
 .final-text {
-    width:600px;
+    width: 90%;
+    max-width: 800px;
     font-family: 'Manrope', sans-serif;
     font-size: clamp(80px, 15vw, 200px);
     color: white;
-    font-size:96px;
     text-align: center;
     letter-spacing: -0.05em;
 }
@@ -571,4 +572,24 @@ body {
     position: relative;
     width: 250px;
     height: auto;
+}
+
+/* --- RESPONSIVE OVERRIDES --- */
+@media (max-width: 768px) {
+    .keyboard-overlay, .figma-overlay {
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+        bottom: 10%;
+    }
+
+    .exporting-images {
+        right: 50%;
+        transform: translate(50%, -50%);
+        top: 25%;
+    }
+
+    .figma-notif {
+        width: 70vw;
+    }
 }

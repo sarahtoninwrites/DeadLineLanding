@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     gsap.to(".hero-zoom-wrapper", {
 
         scale: 2.12,
-        x: 300,
+        x: "15vw",
 
         ease: "none",
 

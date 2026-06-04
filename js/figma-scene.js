@@ -289,6 +289,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 durationPerFrame = 0.1; // Adjust for desired idle speed
             }
 
+            let lastIndex = -1;
             currentFrameTween = gsap.to(proxy, {
                 frame: framesArray.length,
                 duration: framesArray.length * durationPerFrame,
@@ -296,7 +297,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 repeat: -1,
                 onUpdate: () => {
                     const index = Math.floor(proxy.frame) % framesArray.length;
+                    if (index === lastIndex) return;
+                    
                     charEl.style.backgroundImage = `url(${framesArray[index]})`;
+                    lastIndex = index;
                 }
             });
         }

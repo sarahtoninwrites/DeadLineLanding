@@ -7,8 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let animationStarted = false;
 
     // Customizable parameters for keyboardVideo
-    const KEYBOARD_VIDEO_INITIAL_X_OFFSET = 400;
-    const KEYBOARD_VIDEO_INITIAL_Y_OFFSET = -1000;
+    const KEYBOARD_VIDEO_INITIAL_X_OFFSET = "25vw";
+    const KEYBOARD_VIDEO_INITIAL_Y_OFFSET = "-100vh";
     const KEYBOARD_VIDEO_INITIAL_ROTATION = -45;
     const KEYBOARD_VIDEO_INITIAL_SCALE = 2.0;
     const KEYBOARD_VIDEO_INITIAL_TOP_PERCENT = "60%";
@@ -18,8 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const KEYBOARD_VIDEO_LANDING_Y_OFFSET = 50;
     const KEYBOARD_VIDEO_LANDING_ROTATION = 0;
 
-    const KEYBOARD_VIDEO_WALK_FINAL_X_OFFSET = -600;
-    const KEYBOARD_VIDEO_WALK_FINAL_Y_OFFSET = -100;
+    const KEYBOARD_VIDEO_WALK_FINAL_X_OFFSET = "-40vw";
+    const KEYBOARD_VIDEO_WALK_FINAL_Y_OFFSET = "-10vh";
     const KEYBOARD_VIDEO_WALK_FINAL_SCALE = 1.2;
 
 
@@ -86,19 +86,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Combine movement and frame scrubbing into one logic block via a proxy
         const frameProxy = { index: 0 };
+        let lastFrame = -1;
+
         characterTimeline.to(frameProxy, {
             index: totalFrames * walkCycles,
             duration: 2, // Synchronized with horizontal movement duration for perfect sync
             ease: "none",
             onUpdate: () => {
                 const currentFrame = Math.floor(frameProxy.index) % totalFrames;
+                if (currentFrame === lastFrame) return;
+                
                 const paddedFrame = currentFrame.toString().padStart(4, '0');
                 character.src = `Assets/char_walking/${paddedFrame}.png`;
+                lastFrame = currentFrame;
             }
         }, 0);
 
         characterTimeline.to(character, {
-            x: 140, // Slightly adjusted for a more natural stride-to-distance ratio
+            x: "10vw", 
             duration: 2,
             ease: "none"
         }, 0);
@@ -106,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // FALL
         characterTimeline.to(character, {
-            y: 650,
+            y: "70vh",
             opacity: 0,
             ease: "power4.in",
             duration: 1.2
