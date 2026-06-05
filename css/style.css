@@ -171,12 +171,12 @@ body {
     height:auto;
 
 }
-/* .char-chair-R{
-    left: 70%;
-    top: 3%;
+.char-chair-R{
+    left: 80%;
+    top: -30%;
 
 	transform: scaleX(1) rotate(30.31deg);
-} */
+}
 
 .walking-character{
     left: 82%;
