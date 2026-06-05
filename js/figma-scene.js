@@ -121,6 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const availableFrames = [2705, 2713, 2714, 2715, 2716, 2717, 2718, 2719, 2720, 2721, 2722, 2723, 2724, 2726, 2727,2728,2729];
         
         let totalNotificationAnimationEndTime = 0;
+        const isMobile = window.innerWidth <= 768;
 
         for (let i = 0; i < notifCount; i++) {
             let currentNotificationDelay;
@@ -369,6 +370,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     }
 
+                    // Camera tracking for mobile: keep character centered
+                    if (isMobile) {
+                        const charX = gsap.getProperty(".game-character", "x") || 0;
+                        // Character is at left:200px. Visual center is charX + 200 + (150/2)
+                        const targetX = (window.innerWidth / 2) - (charX + 275);
+                        gsap.set(".game-world", { x: targetX });
+                    }
+
                     isScrolling = true;
                     updateFigmaCharAnimation();
 
@@ -398,14 +407,18 @@ document.addEventListener("DOMContentLoaded", () => {
             .to(".game-character", { y: -80, x: 800, duration: 0.4, ease: "power1.in" })
             .addLabel("platform2")
             .call(() => setTimelineState('idle'), [], "platform2") // Ensure idle after landing
-            .call(changeFigmaText, [1], "+=0.2")
+            .call(changeFigmaText, [1], "+=0.2");
 
-            .addLabel("walk2Start")
+        gameTl.addLabel("walk2Start")
             .call(() => setTimelineState('walk'), [], "walk2Start")
-            // Walk across second platform while world pans (P2 is at 900-1500)
-            .to(".game-character", { x: 1230, ease: "none", duration: 2 }, "pan+=0.5")
-            .to(".game-world", { x: "-=1000", ease: "none", duration: 2.5 }, "pan")
-            .addLabel("walk2End")
+            // Walk across second platform
+            .to(".game-character", { x: 1230, ease: "none", duration: 2 }, "pan+=0.5");
+        
+        if (!isMobile) {
+            gameTl.to(".game-world", { x: "-=1000", ease: "none", duration: 2.5 }, "pan");
+        }
+
+        gameTl.addLabel("walk2End")
             .call(() => setTimelineState('idle'), [], "walk2End")
             
             // Jump down to third platform (curved arc)
@@ -414,14 +427,18 @@ document.addEventListener("DOMContentLoaded", () => {
             .addLabel("platform3")
             .call(() => setTimelineState('idle'), [], "platform3") // Ensure idle after landing
             .call(changeFigmaText, [2], "+=0.2")
-            .to(".boss-cursor", { bottom: "10%", right: "10%", opacity: 1, duration: 0.8 }, "<")
+            .to(".boss-cursor", { bottom: "10%", right: "10%", opacity: 1, duration: 0.8 }, "<");
 
-            .addLabel("walk3Start")
+        gameTl.addLabel("walk3Start")
             .call(() => setTimelineState('walk'), [], "walk3Start")
-            // Walk across third platform (P3 is at 1800-2400)
-            .to(".game-character", { x: 2280, ease: "none", duration: 2 }, "pan2+=0.5")
-            .to(".game-world", { x: "-=1000", ease: "none", duration: 2.5 }, "pan2")
-            .addLabel("walk3End")
+            // Walk across third platform
+            .to(".game-character", { x: 2280, ease: "none", duration: 2 }, "pan2+=0.5");
+
+        if (!isMobile) {
+            gameTl.to(".game-world", { x: "-=1000", ease: "none", duration: 2.5 }, "pan2");
+        }
+
+        gameTl.addLabel("walk3End")
             .call(() => setTimelineState('idle'), [], "walk3End")
 
             // Jump up to fourth platform (curved arc)
@@ -430,11 +447,14 @@ document.addEventListener("DOMContentLoaded", () => {
             .to(".game-character", { y: -30, x: 2850, duration: 0.3, ease: "power1.in" })
             .addLabel("platform4")
             .call(() => setTimelineState('idle'), [], "platform4") // Ensure idle after final landing
-            .call(changeFigmaText, [3], "+=0.2")
+            .call(changeFigmaText, [3], "+=0.2");
 
-            // Final world pan with character frozen
-            .to(".game-world", { x: "-=800", ease: "none", duration: 2 }, "final+=0.5")
-            .addLabel("final_pan")
+        // Final world pan
+        if (!isMobile) {
+            gameTl.to(".game-world", { x: "-=800", ease: "none", duration: 2 }, "final+=0.5");
+        }
+
+        gameTl.addLabel("final_pan")
             .call(() => setTimelineState('idle'), [], "final_pan") // Ensure idle during final pan
             
             // Show export UI and animate loader after panning is complete

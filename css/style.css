@@ -336,6 +336,15 @@ body {
     top: 3.125rem;
 }
 
+@media (max-width: 768px) {
+    .figma-overlay {
+        width: 60%;
+        height: 30%;
+        left: 10%;
+        top:10vh;
+       }
+}
+
 .main-text {
     font-size: clamp(1.25rem, 2vw, 2rem);
     line-height: 1.2;
@@ -505,7 +514,7 @@ body {
 
 .figma-notif {
     position: absolute;
-    width: 300px;
+    width: 1.875rem;
     height: auto;
     filter: drop-shadow(0px 4px 12px rgba(0,0,0,0.15));
 }
@@ -528,6 +537,7 @@ body {
     will-change: transform;
 }
 
+
 .game-character {
     position: absolute;
     bottom: 270px; /* Sits on the first platform top edge (-300 + 500) */
@@ -544,9 +554,7 @@ body {
 
 .game-platform {
     position: absolute;
-    /* height: 12px; */
-    /* background: #333333;
-    border: 1px solid #444444; */
+ 
     border-radius: 2px;
     margin:100px;
 }
@@ -647,6 +655,6 @@ body {
     }
 
     .figma-notif {
-        width: 70vw;
+        width: 50vw;
     }
 }
