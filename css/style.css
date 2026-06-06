@@ -458,13 +458,23 @@ body {
     gap: clamp(1rem, 3vh, 2rem);
     padding: 1rem;
 }
+@media (max-width: 768px) {
+    .figma-loading {
+        left:0;
+        padding:0;
+    
+    }
+}
+
 .Figma-logo {
-    width: clamp(50px, 8vw, 70px);
+    width: clamp(2.5rem, 8vw, 4rem);
     height: auto;
+    left:0;
 }
 .Figma-filename{
-    height: clamp(14px, 2vw, 20px);
+    height: clamp(0.759rem, 2vw, 2rem);
     width: auto;
+    left:0;
 }
 .loading-images{
     height: auto;
@@ -521,8 +531,7 @@ body {
 @media (max-width: 768px) {
     .notification-overlay {
         margin:10vw;
-        overflow: visible;
-    
+        overflow:visible;
     }
 }
 
@@ -535,7 +544,8 @@ body {
 
 @media (max-width: 768px) {
     .figma-notif {
-        width: 15rem;
+        width: 10rem;
+        left:5%;
         height:auto;
     }
 }
@@ -639,7 +649,7 @@ body {
     width: 90%;
     max-width: 800px;
     font-family: 'Manrope', sans-serif;
-    font-size: clamp(5rem, 15vw, 10rem);
+    font-size: clamp(3rem, 15vw, 10rem);
     color: white;
     text-align: center;
     letter-spacing: -0.05em;
