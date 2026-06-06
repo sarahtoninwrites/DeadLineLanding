@@ -29,11 +29,7 @@
       align-items: center;
       z-index: 10;
     }
-    .hero-art-replay {
-      width: 40vw;
-      max-width: 600px;
-      margin-bottom: 40px;
-    }
+
     .play-button-link {
       position: absolute;
       bottom: 15%;
@@ -43,10 +39,23 @@
     .play-button-link:hover {
       transform: scale(1.1);
     }
+
     .top-right-btn {
-      top: 30px;
-      right: 30px;
+      top: 1.8rem;
+      right: 1.8rem;
       bottom: auto;
+    }
+    .top-right-btn img {
+      height:3.125rem;
+    }
+    .final-btn {
+      margin-top:10%;
+    }
+
+    @media (max-width: 768px) {
+        .top-right-btn img {
+            height:2rem;
+        }
     }
     .keyboard-char {
       position: absolute;
@@ -137,7 +146,7 @@
     </div>
 
     <a href="https://studiomesmer.com/deadline" class="play-button-link top-right-btn">
-        <img src="Assets/PlayButton.svg" alt="Play Now" style="height: 50px;">
+        <img src="Assets/PlayButton.svg" alt="Play Now">
     </a>
 
 </section>
@@ -197,7 +206,9 @@
             <img class="game-platform" src="Assets/figma_scene/export.jpg" style="width: 300px; left: 2800px; bottom: 40px;">
 
         </div>
-        <div class="game-character"></div>
+        <div class="game-character">
+            <!-- <img id="character-sprite" /> -->
+        </div>
     </div>
     <div class="exporting-images">
         <img
@@ -222,7 +233,7 @@
     </div>
 
     <a href="https://studiomesmer.com/deadline" class="play-button-link top-right-btn">
-        <img src="Assets/PlayButton.svg" alt="Play Now" style="height: 50px;">
+        <img src="Assets/PlayButton.svg" alt="Play Now">
     </a>
 </section>
 
@@ -231,7 +242,7 @@
         He made it. Can you?
     </p>
     <div class="final-cta">
-        <div class="hero-art-container">
+        <div class="hero-art-container final-art">
             <img
                 src="Assets/DeadLine.svg"
                 class="hero-art"
@@ -243,8 +254,8 @@
             <img class="character char-chair-R" src="Assets/Char_Chair.svg">
 
         </div>
-        <a href="https://studiomesmer.com/deadline" class="play-button-link">
-            <img src="Assets/PlayButton.svg" alt="Play Now" style="height: 50px;">
+        <a href="https://studiomesmer.com/deadline" class="play-button-link final-btn">
+            <img src="Assets/PlayButton.svg" alt="Play Now">
         </a>
 
     </div>
