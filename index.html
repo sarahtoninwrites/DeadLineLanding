@@ -32,6 +32,7 @@
 
     .play-button-link {
       position: absolute;
+      z-index:10;
       bottom: 15%;
       transition: transform 0.3s ease;
       cursor: pointer;
@@ -121,19 +122,18 @@
 
 <section class="keyboard-scene section-two">
 
-    <div id="three-keyboard-container">
-        <!-- Character container nested or adjacent for layering -->
+    <!-- <div id="three-keyboard-container">
         <div id="three-character-container"></div>
-    </div>
+    </div>  -->
 
     <video
-        class="keyboard-char"
+        class="keyboard-video"
         muted
         autoplay
         loop
         playsinline
     >
-        <source src="Assets/char_video.webm" type="video/webm">
+        <!-- <source src="Assets/character_horizontal.mov" type="video/webm"> -->
     </video>
 
     <div class="keyboard-overlay">
@@ -298,9 +298,9 @@
 
     <script src="js/figma-scene.js"></script>
 
-    <!-- <script src="js/three-keyboard.js"></script>
+     <script src="js/three-keyboard.js"></script>
 
-    <script src="js/three-character.js"></script> -->
+    <!-- <script src="js/three-character.js"></script> -->
 
     <script src="js/three-scene.js"></script>
 

@@ -61,24 +61,28 @@ document.addEventListener("DOMContentLoaded", () => {
     // TEXT UPDATE FUNCTION
     // -----------------------------
 
+    let currentIndex = -1;
+
     function changeText(index) {
+        if (index === currentIndex) return;
+        currentIndex = index;
 
         const content = story[index];
-
         if(!content) return;
 
+        // Prevent overlapping animations if the user scrolls quickly
+        gsap.killTweensOf([mainText, subText]);
 
         gsap.to(
-
             [mainText, subText],
 
             {
 
                 opacity: 0,
 
-                y: 20,
+                y: 40,
 
-                duration: 0.3,
+                duration: 0.5,
 
                 ease: "power2.out",
 
@@ -97,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                             opacity: 0,
 
-                            y: 20
+                            y: 40
 
                         },
 
@@ -130,9 +134,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // INITIAL TEXT
     // -----------------------------
 
-    mainText.textContent = story[0].main;
+    mainText.textContent = "";
 
-    subText.textContent = story[0].sub;
+    subText.textContent = "";
 
 
     // -----------------------------
@@ -149,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             end: () => window.innerWidth <= 768 ? "+=2500" : "+=4500",
 
-            scrub: 0.5,
+            scrub: 0.3,
             invalidateOnRefresh: true,
 
             pin: true
@@ -163,10 +167,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // STORY BEATS
     // -----------------------------
 
-    tl.call(() => changeText(1), null, 1)
-
-      .call(() => changeText(2), null, 2)
-
-      .call(() => changeText(3), null, 3)
-      .to({}, { duration: 1.5 }); // Adds an intentional pause/hold after the last line appears
+    // Add an empty duration at the start so the scene settles before text appears
+    tl.to({}, { duration: 1.5 }) 
+      .call(() => changeText(0), null, 1.5)
+      .call(() => changeText(1), null, 2.5)
+      .call(() => changeText(2), null, 3.5)
+      .call(() => changeText(3), null, 4.5)
+      .to({}, { duration: 1.5 }); // Hold the final text before transitioning
 });
