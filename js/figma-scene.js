@@ -262,13 +262,17 @@ document.addEventListener("DOMContentLoaded", () => {
         let figmaScrollTimeout;
 
         function setTimelineState(state) {
+            if (timelineState === state) return;
+            console.log(`[Sprite] Timeline Logic State: ${state}`);
             timelineState = state;
             updateFigmaCharAnimation();
         }
 
         function updateFigmaCharAnimation() {
-            let target = (timelineState === 'walk' && isScrolling) ? 'walk' : 'idle';
+            const target = (timelineState === 'walk' && isScrolling) ? 'walk' : 'idle';
+            
             if (target !== currentAnimationState) {
+                console.log(`[Sprite] Switching Animation: ${currentAnimationState} -> ${target} (isScrolling: ${isScrolling})`);
                 currentAnimationState = target;
                 setCharacterState(target);
             }
@@ -276,9 +280,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Helper to switch sprite sheets
         function setCharacterState(state) {
-            if (currentFrameTween) {
-                currentFrameTween.kill(); // Stop previous animation
-            }
+            // Kill previous tween to prevent multiple animations running on the same proxy
+            if (currentFrameTween) currentFrameTween.kill();
 
             const proxy = { frame: 0 };
             let framesArray, durationPerFrame;
@@ -311,9 +314,18 @@ document.addEventListener("DOMContentLoaded", () => {
         currentAnimationState = 'idle';
         setCharacterState('idle');
 
-        // -----------------------------
-        // JUMP PAD ANIMATION LOGIC
-        // -----------------------------
+        // // -----------------------------
+        // // JUMP PAD ANIMATION LOGIC
+        // // -----------------------------
+        
+        // Deterministic Coordinates System
+        const P = {
+            A: { x: 500,  y: 0 },
+            B: { x: 750,  y: -80 },
+            C: { x: 1850, y: 20 },
+            D: { x: 2850, y: -30 }
+        };
+
         const jumpPadEl = document.querySelector(".jump-pad");
         const jumpPadFrames = [];
         
@@ -343,49 +355,50 @@ document.addEventListener("DOMContentLoaded", () => {
         // -----------------------------
         // 2D GAMEPLAY EXPLORATION
         // -----------------------------
-    gameTl = gsap.timeline({
+        gameTl = gsap.timeline({
+            onUpdate: function() {
+                // This fires every frame the animation updates (including scrub/snap)
+                isScrolling = true;
+                updateFigmaCharAnimation();
+
+                // Camera tracking for mobile: keep character centered
+                if (isMobile) {
+                    const charX = gsap.getProperty(".game-character", "x") || 0;
+                    // Character visual center: transform x + initial left (200) + half width (75)
+                    const targetX = (window.innerWidth / 2) - (charX + 275);
+                    gsap.set(".game-world", { x: targetX });
+                }
+
+                // Clear the timeout - if this doesn't fire for 100ms, the character is still
+                window.clearTimeout(figmaScrollTimeout);
+                figmaScrollTimeout = setTimeout(() => {
+                    isScrolling = false;
+                    updateFigmaCharAnimation();
+                }, 100); 
+            },
             scrollTrigger: {
                 trigger: ".figma-scene",
                 start: "top top",
                 end: () => window.innerWidth <= 768 ? "+=4000" : "+=6000",
-                scrub: 0.5, // Reduced for a tighter, more grounded feel
+                scrub: 0.5,
                 pin: true,
                 invalidateOnRefresh: true,
-                snap: {
-                    snapTo: "labels",
-                    duration: { min: 0.2, max: 0.6 },
-                    delay: 0.05,
-                    ease: "power1.inOut"
-                },
-                markers: false,
+                // snap: {
+                //     snapTo: "labels",
+                //     duration: { min: 0.1, max: 0.4 },
+                //     delay: 0, // Instant snap ensures no mid-air pauses
+                //     ease: "power1.inOut"
+                // },
+               // markers: true,
                 onUpdate: (self) => {
                     const velocity = self.getVelocity();
                     
-                    // Only flip if there is significant scroll velocity to prevent direction jitter
-                    if (Math.abs(velocity) > 20) {
-                        if (self.direction === -1) {
-                            gsap.set(".game-character", { scaleX: -1 });
-                        } else if (self.direction === 1) {
-                            gsap.set(".game-character", { scaleX: 1 });
-                        }
+                    // Directional flipping logic
+                    if (velocity < -10) {
+                        gsap.set(".game-character", { scaleX: -1 });
+                    } else if (velocity > 10) {
+                        gsap.set(".game-character", { scaleX: 1 });
                     }
-
-                    // Camera tracking for mobile: keep character centered
-                    if (isMobile) {
-                        const charX = gsap.getProperty(".game-character", "x") || 0;
-                        // Character is at left:200px. Visual center is charX + 200 + (150/2)
-                        const targetX = (window.innerWidth / 2) - (charX + 275);
-                        gsap.set(".game-world", { x: targetX });
-                    }
-
-                    isScrolling = true;
-                    updateFigmaCharAnimation();
-
-                    window.clearTimeout(figmaScrollTimeout);
-                    figmaScrollTimeout = setTimeout(() => {
-                        isScrolling = false;
-                        updateFigmaCharAnimation();
-                    }, 150); // Increased timeout slightly to smooth out slow scrolls
                 }
             }
         });
@@ -395,24 +408,25 @@ document.addEventListener("DOMContentLoaded", () => {
             .addLabel("start")
             .call(changeFigmaText, [0], 0)
             .to({}, { duration: 0.5 }) // Initial buffer before first walk
+            
+            // --- PLATFORM A ---
             .addLabel("walk1Start")
             .call(() => setTimelineState('walk'), [], "walk1Start")
-            // Walk across first platform
-            .to(".game-character", { x: 500, ease: "none", duration: 2 })
+            .to(".game-character", { x: P.A.x, y: P.A.y, ease: "none", duration: 2 })
             .addLabel("walk1End")
             .call(() => setTimelineState('idle'), [], "walk1End")
 
-            // Jump to second platform (curved arc)
-            .to(".game-character", { y: -160, x: 600, duration: 0.4, ease: "power1.out" })
-            .to(".game-character", { y: -80, x: 800, duration: 0.4, ease: "power1.in" })
+            // --- JUMP A -> B ---
+            .to(".game-character", { y: -160, x: 650, duration: 0.4, ease: "power1.out" })
+            .to(".game-character", { y: P.B.y, x: P.B.x, duration: 0.4, ease: "power1.in" })
             .addLabel("platform2")
-            .call(() => setTimelineState('idle'), [], "platform2") // Ensure idle after landing
+            .call(() => setTimelineState('idle'), [], "platform2")
             .call(changeFigmaText, [1], "+=0.2");
 
-        gameTl.addLabel("walk2Start")
+            // --- PLATFORM B ---
+        gameTl.addLabel("walk2Start", "+=0.1")
             .call(() => setTimelineState('walk'), [], "walk2Start")
-            // Walk across second platform
-            .to(".game-character", { x: 1230, ease: "none", duration: 2 }, "pan+=0.5");
+            .to(".game-character", { x: 1230, y: P.B.y, ease: "none", duration: 2 }, "pan+=0.5");
         
         if (!isMobile) {
             gameTl.to(".game-world", { x: "-=1000", ease: "none", duration: 2.5 }, "pan");
@@ -421,18 +435,18 @@ document.addEventListener("DOMContentLoaded", () => {
         gameTl.addLabel("walk2End")
             .call(() => setTimelineState('idle'), [], "walk2End")
             
-            // Jump down to third platform (curved arc)
-            .to(".game-character", { y: -40, x: 1650, duration: 0.4, ease: "power1.out" })
-            .to(".game-character", { y: 20, x: 1850, duration: 0.4, ease: "power1.in" })
+            // --- JUMP B -> C ---
+            .to(".game-character", { y: -40, x: 1550, duration: 0.4, ease: "power1.out" })
+            .to(".game-character", { y: P.C.y, x: P.C.x, duration: 0.4, ease: "power1.in" })
             .addLabel("platform3")
-            .call(() => setTimelineState('idle'), [], "platform3") // Ensure idle after landing
+            .call(() => setTimelineState('idle'), [], "platform3")
             .call(changeFigmaText, [2], "+=0.2")
             .to(".boss-cursor", { bottom: "10%", right: "10%", opacity: 1, duration: 0.8 }, "<");
 
-        gameTl.addLabel("walk3Start")
+            // --- PLATFORM C ---
+        gameTl.addLabel("walk3Start", "+=0.1")
             .call(() => setTimelineState('walk'), [], "walk3Start")
-            // Walk across third platform
-            .to(".game-character", { x: 2280, ease: "none", duration: 2 }, "pan2+=0.5");
+            .to(".game-character", { x: 2280, y: P.C.y, ease: "none", duration: 2 }, "pan2+=0.5");
 
         if (!isMobile) {
             gameTl.to(".game-world", { x: "-=1000", ease: "none", duration: 2.5 }, "pan2");
@@ -441,12 +455,12 @@ document.addEventListener("DOMContentLoaded", () => {
         gameTl.addLabel("walk3End")
             .call(() => setTimelineState('idle'), [], "walk3End")
 
-            // Jump up to fourth platform (curved arc)
-            .to(".game-character", { y: -120, x: 2450, duration: 0.3, ease: "power1.out" })
+            // --- JUMP C -> D ---
+            .to(".game-character", { y: -120, x: 2550, duration: 0.3, ease: "power1.out" })
             .to(".boss-cursor", { bottom: "-300px", right: "-300px", opacity: 0, duration: 0.8 }, "<")
-            .to(".game-character", { y: -30, x: 2850, duration: 0.3, ease: "power1.in" })
+            .to(".game-character", { y: P.D.y, x: P.D.x, duration: 0.3, ease: "power1.in" })
             .addLabel("platform4")
-            .call(() => setTimelineState('idle'), [], "platform4") // Ensure idle after final landing
+            .call(() => setTimelineState('idle'), [], "platform4")
             .call(changeFigmaText, [3], "+=0.2");
 
         // Final world pan

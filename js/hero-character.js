@@ -3,26 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     gsap.registerPlugin(ScrollTrigger);
 
     const character = document.querySelector(".walking-character");
-    const keyboardVideo = document.querySelector(".keyboard-char");
     let animationStarted = false;
-
-    // Customizable parameters for keyboardVideo
-    const KEYBOARD_VIDEO_INITIAL_X_OFFSET = "25vw";
-    const KEYBOARD_VIDEO_INITIAL_Y_OFFSET = "-100vh";
-    const KEYBOARD_VIDEO_INITIAL_ROTATION = -45;
-    const KEYBOARD_VIDEO_INITIAL_SCALE = 2.0;
-    const KEYBOARD_VIDEO_INITIAL_TOP_PERCENT = "60%";
-    const KEYBOARD_VIDEO_INITIAL_LEFT_PERCENT = "75%";
-
-    const KEYBOARD_VIDEO_LANDING_X_OFFSET = 0;
-    const KEYBOARD_VIDEO_LANDING_Y_OFFSET = 50;
-    const KEYBOARD_VIDEO_LANDING_ROTATION = 0;
-
-    const KEYBOARD_VIDEO_WALK_FINAL_X_OFFSET = "-40vw";
-    const KEYBOARD_VIDEO_WALK_FINAL_Y_OFFSET = "-10vh";
-    const KEYBOARD_VIDEO_WALK_FINAL_SCALE = 1.2;
-
-
 
     // -----------------------------
     // INITIAL STATE
@@ -33,19 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
             y: 0,
             rotation: 0,
             opacity: 1
-        });
-    }
-
-    if (keyboardVideo) {
-        gsap.set(keyboardVideo, {
-            opacity: 0,
-            width: "18vw",
-            top: KEYBOARD_VIDEO_INITIAL_TOP_PERCENT,
-            left: KEYBOARD_VIDEO_INITIAL_LEFT_PERCENT,
-            x: KEYBOARD_VIDEO_INITIAL_X_OFFSET,
-            y: KEYBOARD_VIDEO_INITIAL_Y_OFFSET,
-            rotation: KEYBOARD_VIDEO_INITIAL_ROTATION,
-            scale: KEYBOARD_VIDEO_INITIAL_SCALE
         });
     }
 
@@ -126,54 +94,5 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Character timeline initialized via ScrollTrigger");
     };
 
-    // -----------------------------
-    // KEYBOARD & SECOND CHARACTER ENTRANCE
-    // -----------------------------
-    gsap.to("#three-keyboard-container", {
-        opacity: 1,
-        y: 0,
-        ease: "none",
-        scrollTrigger: {
-            trigger: ".keyboard-scene",
-            start: "top top",
-            end: "+=500",
-            scrub: 1.5
-        }
-    });
-
-    if (keyboardVideo) {
-        // Fall animation to initial position on keyboard
-        gsap.to(keyboardVideo, {
-            opacity: 1,
-            x: KEYBOARD_VIDEO_LANDING_X_OFFSET,
-            y: KEYBOARD_VIDEO_LANDING_Y_OFFSET,
-            rotation: KEYBOARD_VIDEO_LANDING_ROTATION,
-            ease: "power2.out",
-            scrollTrigger: {
-                trigger: ".keyboard-scene",
-                start: "top bottom", 
-                end: "top top",
-                scrub: 1.5
-            }
-        });
-
-
-    }
-
-    // -----------------------------
-    // KEYBOARD VIDEO TRIGGER
-    // -----------------------------
-    if (keyboardVideo) {
-        ScrollTrigger.create({
-            trigger: ".fall-trigger",
-            start: "top top",
-            onEnter: () => {
-                gsap.delayedCall(1, () => {
-                    keyboardVideo.currentTime = 0;
-                    keyboardVideo.play();
-                });
-            }
-        });
-    }
 
 });

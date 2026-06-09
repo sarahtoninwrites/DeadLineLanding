@@ -6,15 +6,7 @@
   <title>DeadLine</title>
    <link rel="stylesheet" href="css/style.css">
   <style>
-    #three-keyboard-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-      pointer-events: none;
-    }
+
     .final-cta {
       opacity: 0;
       visibility: hidden;
@@ -58,14 +50,7 @@
             height:2rem;
         }
     }
-    .keyboard-char {
-      position: absolute;
-      bottom: 25%;
-      left: 40%;
-      width: 18vw;
-      z-index: 5;
-      pointer-events: none;
-    }
+ 
   </style>
 </head>
 <body>
@@ -151,6 +136,7 @@
 
 </section>
 
+
 <section class="transition-section">
     <div class="transition-content">
         <p class="transition-subtext">You made it across. You're still alive!</p>
@@ -169,7 +155,6 @@
         <img src="Assets/scroll.svg" alt="Scroll down">
     </div>
 </section>
-
 
 
 <section class="figma-loading">
@@ -237,6 +222,7 @@
     </a>
 </section>
 
+
 <section class="final-section">
     <p class="final-text">
         He made it. Can you?
@@ -261,25 +247,21 @@
     </div>
 </section>
 
+
     <!-- GSAP -->
-
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 
 
     <!-- LENIS -->
-
     <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.16/dist/lenis.min.js"></script>
 
 
     <!-- THREE -->
-
     <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
 
 
     <!-- GLTF LOADER -->
-
     <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
 
     <!-- FBX LOADER -->
@@ -290,19 +272,16 @@
 
     <script src="js/main.js"></script>
 
-    <script src="js/character.js"></script>
+    <script src="js/hero-character.js"></script>
 
-    <script src="js/hero.js"></script>
+    <script src="js/hero-zoom.js"></script>
 
-    <script src="js/narrative.js"></script>
+    <script src="js/KB-narrative.js"></script>
 
     <script src="js/figma-scene.js"></script>
 
-     <script src="js/three-keyboard.js"></script>
-
-    <!-- <script src="js/three-character.js"></script> -->
-
-    <script src="js/three-scene.js"></script>
+    <script src="js/KB-background.js"></script>
 
 </body>
 </html>
+
