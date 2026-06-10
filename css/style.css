@@ -332,10 +332,10 @@ body {
     text-align: left;
     font-family: 'Manrope', sans-serif;
     pointer-events: none;
-    width: min(30%, 500px);
+    width: min(30%, 40%);
     height:30%;
     left :10%;
-    bottom:3.125rem;
+    bottom:10rem;
 }
 @media (max-width: 768px) {
     .keyboard-overlay {
@@ -359,17 +359,22 @@ body {
     text-align: left;
     font-family: 'Manrope', sans-serif;
     pointer-events: none;
-    width: 60%;
+    width: min(30%, 60%);
     height:30%;
     left: 10%;
     top: 3.125rem;
 }
 
 .main-text {
-    font-size: clamp(1.25rem, 2vw, 2rem);
-    line-height: 1.2;
-    color: white;
+    font-size: clamp(1.25rem, 2.5vw, 3rem);
+    font-weight:500;
     margin-bottom: 0.75rem;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.09;
+    letter-spacing: 2px;
+    text-align: left;
+    color: #fff;
 }
 
 .sub-text {
