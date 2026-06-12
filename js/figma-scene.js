@@ -214,7 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (state === 'walk') {
                 framesArray = walkFramesURLs;
-                durationPerFrame = 0.05; // Adjust for desired walk speed
+                durationPerFrame = 0.08; // Slower leg movement (was 0.05)
             } else { // idle
                 framesArray = idleFramesURLs;
                 durationPerFrame = 0.1; // Adjust for desired idle speed
@@ -305,7 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
             scrollTrigger: {
                 trigger: ".figma-scene",
                 start: "top top",
-                end: () => window.innerWidth <= 768 ? "+=4000" : "+=6000",
+                end: () => window.innerWidth <= 768 ? "+=6000" : "+=9000", // Increased scroll distance slows movement
                 scrub: 0.5,
                 pin: true,
                 invalidateOnRefresh: true,
@@ -341,13 +341,13 @@ document.addEventListener("DOMContentLoaded", () => {
             // --- PLATFORM A ---
             .addLabel("walk1Start")
             .call(() => setTimelineState('walk'), [], "walk1Start")
-            .to(".game-character", { x: P.A.x, y: P.A.y, ease: "none", duration: 2 })
+            .to(".game-character", { x: P.A.x, y: P.A.y, ease: "none", duration: 3 })
             .addLabel("walk1End")
             .call(() => setTimelineState('idle'), [], "walk1End")
 
             // --- JUMP A -> B ---
-            .to(".game-character", { y: -160, x: 650, duration: 0.4, ease: "power1.out" })
-            .to(".game-character", { y: P.B.y, x: P.B.x, duration: 0.4, ease: "power1.in" })
+            .to(".game-character", { y: -160, x: 650, duration: 0.8, ease: "power1.out" })
+            .to(".game-character", { y: P.B.y, x: P.B.x, duration: 0.8, ease: "power1.in" })
             .addLabel("platform2")
             .call(() => setTimelineState('idle'), [], "platform2")
             .call(changeFigmaText, [1], "+=0.2");
@@ -355,7 +355,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // --- PLATFORM B ---
         gameTl.addLabel("walk2Start", "+=0.1")
             .call(() => setTimelineState('walk'), [], "walk2Start")
-            .to(".game-character", { x: 1230, y: P.B.y, ease: "none", duration: 2 }, "pan+=0.5");
+            .to(".game-character", { x: 1230, y: P.B.y, ease: "none", duration: 3 }, "pan+=0.5");
         
         if (!isMobile) {
             gameTl.to(".game-world", { x: "-=1000", ease: "none", duration: 2.5 }, "pan");
@@ -365,8 +365,8 @@ document.addEventListener("DOMContentLoaded", () => {
             .call(() => setTimelineState('idle'), [], "walk2End")
             
             // --- JUMP B -> C ---
-            .to(".game-character", { y: -40, x: 1550, duration: 0.4, ease: "power1.out" })
-            .to(".game-character", { y: P.C.y, x: P.C.x, duration: 0.4, ease: "power1.in" })
+            .to(".game-character", { y: -40, x: 1550, duration: 0.8, ease: "power1.out" })
+            .to(".game-character", { y: P.C.y, x: P.C.x, duration: 0.8, ease: "power1.in" })
             .addLabel("platform3")
             .call(() => setTimelineState('idle'), [], "platform3")
             .call(changeFigmaText, [2], "+=0.2")
@@ -375,7 +375,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // --- PLATFORM C ---
         gameTl.addLabel("walk3Start", "+=0.1")
             .call(() => setTimelineState('walk'), [], "walk3Start")
-            .to(".game-character", { x: 2280, y: P.C.y, ease: "none", duration: 2 }, "pan2+=0.5");
+            .to(".game-character", { x: 2280, y: P.C.y, ease: "none", duration: 3 }, "pan2+=0.5");
 
         if (!isMobile) {
             gameTl.to(".game-world", { x: "-=1000", ease: "none", duration: 2.5 }, "pan2");
@@ -385,16 +385,16 @@ document.addEventListener("DOMContentLoaded", () => {
             .call(() => setTimelineState('idle'), [], "walk3End")
 
             // --- JUMP C -> D ---
-            .to(".game-character", { y: -120, x: 2550, duration: 0.3, ease: "power1.out" })
+            .to(".game-character", { y: -120, x: 2550, duration: 0.6, ease: "power1.out" })
             .to(".boss-cursor", { bottom: "-300px", right: "-300px", opacity: 0, duration: 0.8 }, "<")
-            .to(".game-character", { y: P.D.y, x: P.D.x, duration: 0.3, ease: "power1.in" })
+            .to(".game-character", { y: P.D.y, x: P.D.x, duration: 0.6, ease: "power1.in" })
             .addLabel("platform4")
             .call(() => setTimelineState('idle'), [], "platform4")
             .call(changeFigmaText, [3], "+=0.2");
 
         // Final world pan
         if (!isMobile) {
-            gameTl.to(".game-world", { x: "-=800", ease: "none", duration: 2 }, "final+=0.5");
+            gameTl.to(".game-world", { x: "-=800", ease: "none", duration: 3 }, "final+=0.5");
         }
 
         gameTl.addLabel("final_pan")
@@ -403,9 +403,9 @@ document.addEventListener("DOMContentLoaded", () => {
             // Show export UI and animate loader after panning is complete
             .call(changeFigmaText, [4])
             .to(".exporting-images", { opacity: 1, duration: 0.5 })
-            .to(".exporting-images .loading-bar-progress", { 
+            .to(".exporting-images .loading-bar-progress", {
                 width: "100%", 
-                duration: 2, 
+                duration: 5, 
                 ease: "none",
                 onComplete: () => {
                     // Enable the final CTA trigger once loading is finished
