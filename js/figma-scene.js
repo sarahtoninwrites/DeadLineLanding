@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const baseWidth = isMobile ? (window.innerWidth <= 480 ? 208 : 160) : 300;
                 const scale = 1.5;
                 const scaledWidth = baseWidth * scale;
-                const padding = 20; // Margin from screen edges
+                const padding = 10; // Margin from screen edges
 
                 // Offset created by the scale expansion from the center
                 const expansionOffset = (scaledWidth - baseWidth) / 2;
