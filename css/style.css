@@ -545,7 +545,8 @@ body {
     height: 100vh;
     pointer-events: none;
     z-index: 2000;
-    overflow: hidden;
+    overflow: visible;
+    /* background:#0F0404; */
 }
 
 @media (max-width: 768px) {

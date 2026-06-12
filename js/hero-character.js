@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     for (let i = 0; i < totalFrames; i++) {
         const img = new Image();
         const frameName = i.toString().padStart(4, '0');
-        img.src = `Assets/char_walking/${frameName}.png`;
+        img.src = `Assets/hero_elements/char_walking/${frameName}.png`;
         preloadedImages.push(img);
     }
 
@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (currentFrame === lastFrame) return;
                 
                 const paddedFrame = currentFrame.toString().padStart(4, '0');
-                character.src = `Assets/char_walking/${paddedFrame}.png`;
+                character.src = `Assets/hero_elements/char_walking/${paddedFrame}.png`;
                 lastFrame = currentFrame;
             }
         }, 0);

@@ -1,13 +1,106 @@
 document.addEventListener("DOMContentLoaded", () => {
     gsap.registerPlugin(ScrollTrigger);
+
+    let gameTl;
+
+    // // Initially hide the figma scene to facilitate a background transition during chaos
+    // gsap.set(".figma-scene", { opacity: 0 });
+
+    // // -----------------------------
+    // // TRANSITION SECTION LOCK
+    // // -----------------------------
+    // window.isTransitionLocked = false;
+
+    // // Block native scroll events to prevent "scroll buffering" during the lock
+    // const blockScroll = (e) => {
+    //     if (window.isTransitionLocked) e.preventDefault();
+    // };
+    // window.addEventListener('wheel', blockScroll, { passive: false });
+    // window.addEventListener('touchmove', blockScroll, { passive: false });
+    // window.addEventListener('keydown', (e) => {
+    //     if (window.isTransitionLocked && ["Space", "ArrowUp", "ArrowDown", "PageUp", "PageDown"].includes(e.code)) {
+    //         e.preventDefault();
+    //     }
+    // }, { passive: false });
+
+    // // -----------------------------
+    // // TRANSITION SECTION CARD FLIP
+    // // -----------------------------
+    // const transSection = document.querySelector(".transition-section");
+    // const loadingSection = document.querySelector(".figma-loading");
     
-    // Disable default browser scroll restoration to prevent jumps to the top during ScrollTrigger refreshes
-    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    // // Move the loading section inside the transition container so they pin together
+    // if (transSection && loadingSection) {
+    //     transSection.appendChild(loadingSection);
+    // }
 
-    let gameTl; // Declared here, but assigned later
+    // let burstTriggered = false;
 
-    // Make triggerNotificationChaos globally accessible
-    window.triggerNotificationChaos = function() {
+    // gsap.set(".transition-section", { perspective: 2000 });
+    // gsap.set(".transition-content", { transformStyle: "preserve-3d", backfaceVisibility: "hidden" });
+    // gsap.set(".figma-loading", { 
+    //     position: "absolute",
+    //     top: 0,
+    //     left: 0,
+    //     width: "100%",
+    //     height: "100%",
+    //     transformStyle: "preserve-3d", 
+    //     backfaceVisibility: "hidden",
+    //     rotationY: 180,
+    //     autoAlpha: 0,
+    //     zIndex: 5
+    // });
+
+    // const transitionTl = gsap.timeline({
+    //     scrollTrigger: {
+    //         trigger: ".transition-section",
+    //         start: "top top",
+    //         end: () => window.innerWidth <= 768 ? "+=3500" : "+=6000",
+    //         pin: true,
+    //         scrub: 0.5,
+    //         invalidateOnRefresh: true,
+    //         onEnter: () => {
+    //             if (!window.isTransitionLocked) {
+    //                 window.isTransitionLocked = true;
+    //                 if (window.lenis) window.lenis.stop();
+                    
+    //                 gsap.delayedCall(2, () => {
+    //                     window.isTransitionLocked = false;
+    //                     if (window.lenis) window.lenis.start();
+    //                     gsap.to(".transition-scroll", { autoAlpha: 1, duration: 1 });
+    //                 });
+    //             }
+    //         }
+    //     }
+    // });
+
+    // // Flip the current section out and pull the next section in
+    // transitionTl.to(".transition-content", {
+    //     rotationY: -180,
+    //     autoAlpha: 0,
+    //     duration: 1.5,
+    //     ease: "power2.inOut"
+    // }, 0.5)
+    // .to(".figma-loading", {
+    //     rotationY: 0,
+    //     autoAlpha: 1,
+    //     duration: 1.5,
+    //     ease: "power2.inOut"
+    // }, 0.5)
+    // // Animate the loading bar progress in the same timeline sequence
+    // .to(".figma-loading .loading-bar-progress", {
+    //     width: "100%",
+    //     duration: 4,
+    //     ease: "none",
+    //     onUpdate: function() {
+    //         if (this.progress() > 0.9 && !burstTriggered) {
+    //             burstTriggered = true;
+    //             triggerNotificationChaos();
+    //         }
+    //     }
+    // }, "+=0.5");
+
+    function triggerNotificationChaos() {
         const overlay = document.querySelector('.notification-overlay');
         const slowNotificationsCount = 3; // Number of notifications to pop slowly
         const slowStaggerDelay = 200; // ms delay between slow pops
@@ -16,15 +109,12 @@ document.addEventListener("DOMContentLoaded", () => {
         let lastSlowNotifPopInFinishTime = 0; // Tracks when the last slow notification finishes its pop-in
 
 
-        // Set the overlay background color to hide underlying scenes completely
-        gsap.set(overlay, { backgroundColor: '#0F0404' });
-
         // Switch background: fade in figma-scene and fade out loading content
-        gsap.to(".figma-scene", { opacity: 1, duration: 1, ease: "power2.inOut" });
-        
-        // Immediately lock the scroll and disable Lenis when chaos starts
-        window.isTransitionLocked = true;
-        if (window.lenis) window.lenis.stop();
+        gsap.to(".figma-scene", { opacity: 1, duration: 1.5, ease: "power2.inOut" });
+
+        // Prevent character movement during the notification transition
+        if (typeof gameTl !== 'undefined' && gameTl.scrollTrigger) gameTl.scrollTrigger.disable();
+
 
         const notifCount = 50;
         // Define the specific frame numbers you have in your Assets folder here
@@ -58,27 +148,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 const startX = window.innerWidth / 2 + (Math.random() - 0.5) * 200;
                 const startY = window.innerHeight + 100;
 
-                // Calculate safe bounds to keep notifications within viewport after scaling (1.5x)
-                // baseWidth matches the CSS widths (300px desktop, ~160-200px mobile)
-                const baseWidth = isMobile ? (window.innerWidth <= 480 ? 208 : 160) : 300;
-                const scale = 1.5;
-                const scaledWidth = baseWidth * scale;
-                const padding = 20; // Margin from screen edges
-
-                // Offset created by the scale expansion from the center
-                const expansionOffset = (scaledWidth - baseWidth) / 2;
-
-                // Final safe ranges for the 'x' and 'y' translation
-                const minX = expansionOffset + padding;
-                const maxX = window.innerWidth - baseWidth - expansionOffset - padding;
-                const minY = expansionOffset + padding; // Assuming height is similar or smaller
-                const maxY = window.innerHeight - 120 - expansionOffset - padding; // 120 approx height
-
                 gsap.fromTo(img, 
                     { x: startX, y: startY, scale: 0.4, opacity: 0},
                     { 
-                        x: gsap.utils.random(minX, maxX),
-                        y: gsap.utils.random(minY, maxY),
+                        x: Math.random() * (window.innerWidth - 300), 
+                        y: Math.random() * (window.innerHeight - 100), 
                         opacity: 1, 
                         scale: 1.5,
                         duration: currentPopDuration,
@@ -329,9 +403,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        // Ensure the game doesn't capture scroll progress during the transition/chaos
-        if (gameTl.scrollTrigger) gameTl.scrollTrigger.disable();
-
         // Character exploration sequence
         gameTl
             .addLabel("start")
@@ -403,17 +474,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Show export UI and animate loader after panning is complete
             .call(changeFigmaText, [4])
             .to(".exporting-images", { opacity: 1, duration: 0.5 })
-            .to(".exporting-images .loading-bar-progress", { 
-                width: "100%", 
-                duration: 2, 
-                ease: "none",
-                onComplete: () => {
-                    // Enable the final CTA trigger once loading is finished
-                    if (window.finalTl && window.finalTl.scrollTrigger) {
-                        window.finalTl.scrollTrigger.enable();
-                    }
-                }
-            })
+            .to(".exporting-images .loading-bar-progress", { width: "100%", duration: 2, ease: "none" })
             .addLabel("end");
 
         // Calculate total time (stagger + duration) and add a small pause before fading
@@ -426,34 +487,47 @@ document.addEventListener("DOMContentLoaded", () => {
             ease: "power2.inOut",
             onComplete: () => {
                 overlay.innerHTML = ''; // Clean up DOM
-                
                 // Re-enable gameplay scroll now that the transition is complete
                 if (gameTl && gameTl.scrollTrigger) {
                     gameTl.scrollTrigger.enable();
-                }
-
-                // Refresh all ScrollTriggers while the screen is still technically "locked" 
-                // so recalculations don't cause visible jumps or interaction glitches.
-                ScrollTrigger.refresh();
-
-                // Release the scroll lock and restart Lenis
-                window.isTransitionLocked = false;
-                if (window.lenis) {
-                    window.lenis.start();
-                    
-                    // Force the scroll position to the start of the figma scene. 
-                    // Using the trigger's calculated 'start' point is more precise than a CSS selector.
-                    const targetScroll = (gameTl && gameTl.scrollTrigger) ? gameTl.scrollTrigger.start : '.figma-scene';
-                    window.lenis.scrollTo(targetScroll, { 
-                        immediate: true,
-                        force: true
-                    });
+                    ScrollTrigger.refresh();
                 }
             }
         });
 
         // Start jump pad animation on load
-        playJumpPadAnimation(); // This can be called here or later, depending on when you want the jump pad to animate
+        playJumpPadAnimation();
     }
+
+    // // -----------------------------
+    // // FINAL SECTION ANIMATION
+    // // -----------------------------
+    // const finalTl = gsap.timeline({
+    //     scrollTrigger: {
+    //         trigger: ".final-section",
+    //         start: "top 70%", // Trigger slightly earlier for better visibility
+    //         toggleActions: "play none none none"
+    //     }
+    // });
+
+    // finalTl.from(".final-text", {
+    //     opacity: 0,
+    //     y: 100,
+    //     scale: 0.8,
+    //     duration: 5,
+    //     ease: "power4.out"
+    // })
+    // .to(".final-text", { 
+    //     opacity: 0, 
+    //     y: -40, 
+    //     duration: 3, 
+    //     ease: "power2.inOut" 
+    // }, "+=3") // Wait 2.5 seconds before starting the fade out
+    // .to(".final-cta", { 
+    //     opacity: 1, 
+    //     visibility: "visible", 
+    //     duration: 5, 
+    //     ease: "power2.inOut" 
+    // }, "-=0.5");
 
 });
