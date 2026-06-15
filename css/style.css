@@ -361,7 +361,7 @@ body {
     text-align: left;
     font-family: 'Manrope', sans-serif;
     pointer-events: none;
-    width: min(30%, 60%);
+    width: min(55%, 60%);
     height:30%;
     left: 10%;
     top: 3.125rem;
@@ -442,7 +442,7 @@ body {
     width: clamp(120px, 18vw, 250px);
     height: auto;
     object-fit: contain;
-    margin: 0;
+    margin: 1rem;
     border-radius: 8px;
     transform: rotate(90deg);
 }
@@ -553,7 +553,7 @@ body {
 
 @media (max-width: 768px) {
     .notification-overlay {
-        margin:10vw;
+        /* margin:10vw; */
         overflow:visible;
     }
 }
@@ -568,7 +568,7 @@ body {
 @media (max-width: 768px) {
     .figma-notif {
         width: 10rem;
-        left:5%;
+        /* left:5%; */
         height:auto;
     }
 }
