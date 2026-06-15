@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
             scrollTrigger: {
                 trigger: ".deadline-hero",
                 start: "top top",
-                end: () => window.innerWidth <= 768 ? "+=1500" : "+=2500",
+                end: () => window.innerWidth <= 768 ? "+=1000" : "+=2500", // Reduced scroll distance for mobile
                 scrub: 0.5, // Reduced from 0.7 for more responsive control
                 snap: {
                     snapTo: [0, 0.7, 1], // Snap to start, landing, and end of fall

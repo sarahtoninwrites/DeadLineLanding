@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
         scrollTrigger: {
             trigger: ".transition-section",
             start: "top top",
-            end: () => window.innerWidth <= 768 ? "+=3500" : "+=6000",
+            end: () => window.innerWidth <= 768 ? "+=2000" : "+=6000", // Reduced scroll distance for mobile
             pin: true,
             scrub: 0.5,
             invalidateOnRefresh: true,

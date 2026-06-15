@@ -148,11 +148,8 @@ document.addEventListener("DOMContentLoaded", () => {
         scrollTrigger: {
 
             trigger: ".keyboard-scene",
-
             start: "top top",
-
             end: () => window.innerWidth <= 768 ? "+=2500" : "+=4500",
-
             scrub: 0.3,
             invalidateOnRefresh: true,
 

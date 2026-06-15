@@ -305,7 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
             scrollTrigger: {
                 trigger: ".figma-scene",
                 start: "top top",
-                end: () => window.innerWidth <= 768 ? "+=6000" : "+=9000", // Increased scroll distance slows movement
+                end: () => window.innerWidth <= 768 ? "+=4000" : "+=9000", // Reduced scroll distance for mobile
                 scrub: 0.5,
                 pin: true,
                 invalidateOnRefresh: true,
